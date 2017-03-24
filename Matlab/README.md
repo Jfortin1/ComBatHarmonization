@@ -1,4 +1,4 @@
-# ComBatHarmonization: tutorial in R
+# ComBatHarmonization: tutorial in Matlab
 
 ##### Installation
 
