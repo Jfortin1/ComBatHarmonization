@@ -6,9 +6,9 @@
 
 ##### References
 
-| Method      | Citation     | Paper Link
+|       | Citation     | Paper Link
 | -------------  | -------------  | -------------  |
-| RAVEL    |  Jean-Philippe Fortin, Elizabeth M Sweeney, John Muschelli, Ciprian M Crainiceanu, Russell T Shinohara, Alzheimer's Disease Neuroimaging Initiative, et al. **Removing inter-subject technical variability in magnetic resonance imaging studies**. NeuroImage, 132:198–212, 2016.      | [Link](http://www.sciencedirect.com/science/article/pii/S1053811916001452) |
+| Original ComBat paper for gene expression array    |  Jean-Philippe Fortin, Elizabeth M Sweeney, John Muschelli, Ciprian M Crainiceanu, Russell T Shinohara, Alzheimer's Disease Neuroimaging Initiative, et al. **Removing inter-subject technical variability in magnetic resonance imaging studies**. NeuroImage, 132:198–212, 2016.      | [Link](http://www.sciencedirect.com/science/article/pii/S1053811916001452) |
 | WhiteStripe    | Russell T Shinohara, Elizabeth M Sweeney, Jeff Goldsmith, Navid Shiee, Farrah J Mateen, Peter A Calabresi, Samson Jarso, Dzung L Pham, Daniel S Reich, Ciprian M Crainiceanu, Australian Imaging Biomarkers Lifestyle Flagship Study of Ageing, and Alzheimer’s Disease Neuroimaging Initiative. **Statistical normalization techniques for magnetic resonance  imaging**. Neuroimage Clin, 6:9–19, 2014.    |[Link](http://www.sciencedirect.com/science/article/pii/S221315821400117X)| 
 
 
