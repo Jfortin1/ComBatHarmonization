@@ -2,10 +2,7 @@
 ### Multi-site harmonization with ComBat
 
 --------
-**Creator**: Jean-Philippe Fortin, jeanphi@mail.med.upenn.edu
-
-**Authors**: Jean-Philippe Fortin, John Muschelli, Russell T. Shinohara
-
+**Maintainer**: Jean-Philippe Fortin, fortin946@gmail.com
 
 ##### References
 
