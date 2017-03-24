@@ -1,0 +1,6 @@
+library(sva)
+data <- read.csv("testdata.csv")
+batch = c(1,1,1,1,1,2,2,2,2,2)
+mod=model.matrix(~c(1,2,1,2,1,2,1,2,1,2))
+norm <- ComBat(data, batch=batch, mod=mod)
+write.csv(norm, quote=FALSE, file="testdata_combat_r.csv", row.names=FALSE)
