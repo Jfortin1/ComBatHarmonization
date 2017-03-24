@@ -72,7 +72,7 @@ function bayesdata = combat(dat, batch, mod)
 	    delta_star = [delta_star; temp(2,:)];
 	end
 	    
-	fprintf('Adjusting the Data\n')
+	fprintf('[combat] Adjusting the Data\n')
 	bayesdata = s_data;
 	j = 1;
 	for i=1:n_batch
