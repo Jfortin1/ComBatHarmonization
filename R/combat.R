@@ -1,6 +1,5 @@
 combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
   # make batch a factor and make a set of indicators for batch
-  if(length(dim(batch))>1){stop("This version of ComBat only allows one batch variable")}  ## to be updated soon!
   batch <- as.factor(batch)
   batchmod <- model.matrix(~-1+batch)  
   cat("Found",nlevels(batch),'batches\n')
@@ -21,25 +20,25 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
   design <- as.matrix(design[,!check])
   
   # Number of covariates or covariate levels
-  cat("Adjusting for",ncol(design)-ncol(batchmod),'covariate(s) or covariate level(s)\n')
+  cat("[combat] Adjusting for",ncol(design)-ncol(batchmod),'covariate(s) or covariate level(s)\n')
   
   # Check if the design is confounded
   if(qr(design)$rank<ncol(design)){
     if(ncol(design)==(n.batch+1)){
-      stop("The covariate is confounded with batch! Remove the covariate and rerun ComBat")
+      stop("[combat] The covariate is confounded with batch. Remove the covariate and rerun ComBat.")
     }
     if(ncol(design)>(n.batch+1)){
       if((qr(design[,-c(1:n.batch)])$rank<ncol(design[,-c(1:n.batch)]))){
-        stop('The covariates are confounded! Please remove one or more of the covariates so the design is not confounded')
+        stop('The covariates are confounded. Please remove one or more of the covariates so the design is not confounded.')
       } else {
-        stop("At least one covariate is confounded with batch! Please remove confounded covariates and rerun ComBat")
+        stop("At least one covariate is confounded with batch. Please remove confounded covariates and rerun ComBat.")
       }
     }
   }
     
   
-  ##Standardize Data across genes
-  cat('Standardizing Data across genes\n')
+  ##Standardize Data across features
+  cat('[combat ]Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
   
       
@@ -54,7 +53,7 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
   s.data <- (dat-stand.mean)/(sqrt(var.pooled)%*%t(rep(1,n.array)))
   
   ##Get regression batch effect parameters
-  cat("Fitting L/S model and finding priors\n")
+  cat("[combat] Fitting L/S model and finding priors\n")
   batch.design <- design[,1:n.batch]
   gamma.hat <- solve(t(batch.design)%*%batch.design)%*%t(batch.design)%*%t(as.matrix(s.data))
 
@@ -72,37 +71,37 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
   
   ##Plot empirical and parametric priors
   
-  if (prior.plots & par.prior){
-    par(mfrow=c(2,2))
-    tmp <- density(gamma.hat[1,])
-    plot(tmp,  type='l', main="Density Plot")
-    xx <- seq(min(tmp$x), max(tmp$x), length=100)
-    lines(xx,dnorm(xx,gamma.bar[1],sqrt(t2[1])), col=2)
-    qqnorm(gamma.hat[1,])	
-    qqline(gamma.hat[1,], col=2)	
+  # if (prior.plots & par.prior){
+  #   par(mfrow=c(2,2))
+  #   tmp <- density(gamma.hat[1,])
+  #   plot(tmp,  type='l', main="Density Plot")
+  #   xx <- seq(min(tmp$x), max(tmp$x), length=100)
+  #   lines(xx,dnorm(xx,gamma.bar[1],sqrt(t2[1])), col=2)
+  #   qqnorm(gamma.hat[1,])	
+  #   qqline(gamma.hat[1,], col=2)	
     
-    tmp <- density(delta.hat[1,])
-    invgam <- 1/rgamma(ncol(delta.hat),a.prior[1],b.prior[1])
-    tmp1 <- density(invgam)
-    plot(tmp,  typ='l', main="Density Plot", ylim=c(0,max(tmp$y,tmp1$y)))
-    lines(tmp1, col=2)
-    qqplot(delta.hat[1,], invgam, xlab="Sample Quantiles", ylab='Theoretical Quantiles')	
-    lines(c(0,max(invgam)),c(0,max(invgam)),col=2)	
-    title('Q-Q Plot')
-  }
+  #   tmp <- density(delta.hat[1,])
+  #   invgam <- 1/rgamma(ncol(delta.hat),a.prior[1],b.prior[1])
+  #   tmp1 <- density(invgam)
+  #   plot(tmp,  typ='l', main="Density Plot", ylim=c(0,max(tmp$y,tmp1$y)))
+  #   lines(tmp1, col=2)
+  #   qqplot(delta.hat[1,], invgam, xlab="Sample Quantiles", ylab='Theoretical Quantiles')	
+  #   lines(c(0,max(invgam)),c(0,max(invgam)),col=2)	
+  #   title('Q-Q Plot')
+  # }
   
   ##Find EB batch adjustments
   
   gamma.star <- delta.star <- NULL
   if(par.prior){
-    cat("Finding parametric adjustments\n")
+    cat("[combat] Finding parametric adjustments\n")
     for (i in 1:n.batch){
         temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
         gamma.star <- rbind(gamma.star,temp[1,])
         delta.star <- rbind(delta.star,temp[2,])
     }
   }else{
-    cat("Finding nonparametric adjustments\n")
+    cat("[combat] Finding nonparametric adjustments\n")
     for (i in 1:n.batch){
       temp <- int.eprior(as.matrix(s.data[,batches[[i]]]),gamma.hat[i,],delta.hat[i,])
       gamma.star <- rbind(gamma.star,temp[1,])
@@ -112,7 +111,7 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
   
   
   ### Normalize the Data ###
-  cat("Adjusting the Data\n")
+  cat("[combat] Adjusting the Data\n")
   
   bayesdata <- s.data
   j <- 1

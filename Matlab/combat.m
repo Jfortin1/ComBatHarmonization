@@ -28,14 +28,14 @@ function bayesdata = combat(dat, batch, mod)
 	if rank(design)<size(design,2)
 		nn = size(design,2);
 	    if nn==(n_batch+1) 
-	      error('Error. The covariate is confounded with batch! Remove the covariate and rerun ComBat')
+	      error('Error. The covariate is confounded with batch. Remove the covariate and rerun ComBat.')
 	    end
 	    if nn>(n_batch+1)
 	      temp = design(:,(n_batch+1):nn);
 	      if rank(temp) < size(temp,2)
-	        error('Error. The covariates are confounded! Please remove one or more of the covariates so the design is not confounded')
+	        error('Error. The covariates are confounded. Please remove one or more of the covariates so the design is not confounded.')
 	      else 
-	        error('Error. At least one covariate is confounded with batch! Please remove confounded covariates and rerun ComBat')
+	        error('Error. At least one covariate is confounded with batch. Please remove confounded covariates and rerun ComBat.')
 	      end
 	    end
 	 end
