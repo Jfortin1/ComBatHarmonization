@@ -1,3 +1,7 @@
+%data = randn(1000,10);
+%batch = [1 1 1 1 1 2 2 2 2 2];
+%mod = [1 2 1 2 1 2 1 2 1 2]';
+
 function bayesdata = combat(dat, batch, mod)
 	batchmod = dummyvar(batch);
 	n_batch = size(batchmod,2);
@@ -17,10 +21,27 @@ function bayesdata = combat(dat, batch, mod)
 	wh = cellfun(@(x) isequal(x,intercept),num2cell(design,1));
 	bad = find(wh==1);
 	design(:,bad)=[];
+
+
 	fprintf('[combat] Adjusting for %d covariate(s) of covariate level(s)\n',size(design,2)-size(batchmod,2))
+	% Check if the design is confounded
+	if rank(design)<size(design,2)
+		nn = size(design,2);
+	    if nn==(n_batch+1) 
+	      error('Error. The covariate is confounded with batch! Remove the covariate and rerun ComBat')
+	    end
+	    if nn>(n_batch+1)
+	      temp = design(:,(n_batch+1):nn);
+	      if rank(temp) < size(temp,2)
+	        error('Error. The covariates are confounded! Please remove one or more of the covariates so the design is not confounded')
+	      else 
+	        error('Error. At least one covariate is confounded with batch! Please remove confounded covariates and rerun ComBat')
+	      end
+	    end
+	 end
+
+
 	fprintf('[combat] Standardizing Data across features\n')
-
-
 	B_hat = inv(design'*design)*design'*dat';
 	%Standarization Model
 	grand_mean = (n_batches/n_array)*B_hat(1:n_batch,:);
