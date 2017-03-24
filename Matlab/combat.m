@@ -1,12 +1,3 @@
-%Matlab code:
-%dat = randn(10000,10);
-%dat(:,6:10) = 2.*dat(:,6:10) + 10;
-%batch = [1 1 1 1 1 2 2 2 2 2];
-%age = [1 2 1 2 1 2 1 2 1 2];
-%n = length(batch);
-%mod = x2fx(age','linear');
-
-
 function bayesdata = combat(dat, batch, mod)
 	batchmod = dummyvar(batch);
 	n_batch = size(batchmod,2);
