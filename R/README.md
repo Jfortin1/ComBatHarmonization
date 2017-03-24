@@ -1,5 +1,4 @@
-# ComBatHarmonization
-### Multi-site harmonization with ComBat
+# ComBatHarmonization: tutorial in R
 
 ##### Installation
 
