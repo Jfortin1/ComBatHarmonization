@@ -1,33 +1,6 @@
----
-layout: license
-title: Artistic License 2.0
-category: Artistic
-redirect_from: /licenses/artistic/
-source: http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt
-permalink: /licenses/artistic-2.0/
-
-description: Heavily favored by the Perl community, the Artistic license requires that modified versions of the software do not prevent users from running the standard version.
-
-how: Create a text file (typically named LICENSE or LICENSE.txt) in the root of your source code and copy the text of the license into the file. Replace [year] with the current year and [fullname] with the name (or names) of the copyright holders.
-
-required:
-  - include-copyright
-  - document-changes
-
-permitted:
-  - commercial-use
-  - modifications
-  - distribution
-  - sublicense
-  - private-use
-
-forbidden:
-  - no-liability
-  - trademark-use
----
                The Artistic License 2.0
 
-           Copyright (c) [year] [fullname]
+           Copyright (c) [2017] [Jean-Philippe Fortin]
 
      Everyone is permitted to copy and distribute verbatim copies
       of this license document, but changing it is not allowed.
