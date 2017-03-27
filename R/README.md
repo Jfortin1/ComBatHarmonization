@@ -6,7 +6,9 @@
 
 ## 2. Multi-Site Harmonization
 
-### Full ComBat with empirical Bayes
+ComBat estimates scanner-specific location and scale parameters, at each feature, and pools information across features using empirical Bayes to improve the estimation of those parameters for small sample size studies.  
+
+### 2.1 Full ComBat with empirical Bayes
 
 The  `combat` function is the main function. It requires two mandatory arguments:
 - a data matrix (p x n) `dat` for which the p rows are features, and the n columns are participants. 
@@ -35,7 +37,9 @@ The `data.harmonized` object also contains the different parameters estimated by
 - `gamma.star` and `delta.star`: Empirical Bayes estimated L/S parameters.
 - `gamma.bar`, `t2`, `a.prior` and `b.prior`: esimated prior distributions parameters.
 
+### 2.3 ComBat without empirical Bayes
 
+Sometimes, 
 
 
 
