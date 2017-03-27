@@ -29,7 +29,7 @@ RAVEL is an R package that combines the preprocessing and statistical analysis o
 
 ## 2. Software
 
-The reference implementation of ComBat is part of the `sva` R package available throught the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). 
+The reference implementation of ComBat is in the R language and can be found in the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in both R and Matlab. 
 
 
 
