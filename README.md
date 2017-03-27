@@ -33,7 +33,7 @@ The reference implementation of ComBat is written in R and is part of the `sva` 
 
 **Tutorials, instructions and examples for using ComBat:**
 - [In R](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
-- [In Matlab([https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
+- [In Matlab](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
 
 
 
