@@ -31,7 +31,7 @@ source("scripts/combat.R")
 p=10000
 n=10
 batch = c(1,1,1,1,1,2,2,2,2,2) #Batch variable for the scanner id
-dat = matrix(runif(p*n), p, n) #Data matrix
+dat = matrix(runif(p*n), p, n) #Random Data matrix
 ```
 We use the function `combat` to harmonize the data across the 2 scanners:
 
