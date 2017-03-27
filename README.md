@@ -4,9 +4,7 @@
 --------
 **Maintainer**: Jean-Philippe Fortin, fortin946@gmail.com
 
-#### References
-
-If you are using ComBat for the harmonization of multi-site imaging data, please cite the following two papers:
+**References**: If you are using ComBat for the harmonization of multi-site imaging data, please cite the following two papers:
 
 |       | Citation     | Paper Link
 | -------------  | -------------  | -------------  |
