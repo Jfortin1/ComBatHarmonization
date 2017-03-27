@@ -25,7 +25,7 @@ Imaging data suffer from technical between-scanner variation that hinders compar
 We recommend to use the ComBat harmonization method after imaging processing, just right before the statistical analysis. The ComBat harmonization requires the imaging data to be represented in a matrix where rows are the imaging features (for instance voxels, ROIs or connectome edges) and columns are the participants. For example, for voxel-level analyses, this usually requires the images to be registered to a common template space. 
 
 The ComBat algorithm needs two mandatory inputs:
-- **The data matrix**. Rows are features and columns are participants. 
+- _**The data matrix_**. Rows are features and columns are participants. 
 - **The site, study or scanner variable**. The algorithm can only handle one variable. You should provide the smallest unit of the study that you believe introduces unwanted variable. For instance, for a study with 2 sites and 3 scanners (1 site with 1 scanner, 1 site with 2 scanners), the variable for scanner should be used. 
 
 The ComBat algorithm also accepts an optional input:
