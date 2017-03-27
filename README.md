@@ -14,25 +14,20 @@
 
 ## Table of content
 - [1. Introduction](#id-section1)
-- [2. Image preprocessing](#id-section2)
+- [2. Software](#id-section2)
 
 <div id='id-section1'/>
 
 ## 1. Introduction
 
+
+
 RAVEL is an R package that combines the preprocessing and statistical analysis of magnetic resonance imaging (MRI) datasets within one framework. Users can start with raw images in the NIfTI format, and end up with a variety of statistical results associated with voxels and regions of interest (ROI) in the brain. RAVEL stands for _Removal of Artificial Voxel Effect by Linear regression_, the main preprocessing function of the package that allows an effective removal of between-scan unwanted variation. We have shown in [a recent paper](http://www.sciencedirect.com/science/article/pii/S1053811916001452) that RAVEL improves significantly population-wide statistical inference. The vignette is divided into several sections. In Section 1, we present a pre-normalization preprocessing pipeline from raw images to processed images ready for intensity normalization. In Section 2, we explain how to use the RAVEL algorithm as well as other intensity normalization techniques. In Section 3, we present different tools for post-normalization statistical analysis. In Section 4, we present additional functions that help the visualization of images and statistical results. 
-
-##### Installation
-
-```{r}
-library(devtools)
-install_github("jfortin1/RAVEL")
-```
 
 
 <div id='id-section2'/>
 
-## 2. Image preprocessing 
+## 2.Software
 
 
 
