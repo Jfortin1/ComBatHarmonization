@@ -1,6 +1,7 @@
-# This is the original code from the sva package that can be found at
+# This is a copy of the original code from the standard version of the
+# sva package that can be found at
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
-# under the Artistic 2.0 license.
+# The original and present code is under the Artistic 2.0 license.
 
 # Following four find empirical hyper-prior values
 aprior <- function(gamma.hat){
