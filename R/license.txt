@@ -1,8 +1,0 @@
-The code in the scripts combat.R and utils.R are partial modifications 
-of the ComBat code included in the R package sva that can be found at:
-https://bioconductor.org/packages/release/bioc/html/sva.html 
-
-The original and present code is under the Artistic License 2.0.
-If using this code, make sure you agree and accept this license.  
-
-
