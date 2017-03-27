@@ -1,4 +1,4 @@
-# ComBatHarmonization: tutorial in R
+# ComBat harmonization in R
 
 ##### Installation
 
