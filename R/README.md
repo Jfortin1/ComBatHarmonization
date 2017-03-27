@@ -23,11 +23,12 @@ n=10
 batch = c(1,1,1,1,1,2,2,2,2,2) #Batch variable for the scanner id
 dat = matrix(runif(p*n), p, n) #Data matrix
 ```
-To harmonize the data across the 2 scanners:
+We use the function `combat` to harmonize the data across the 2 scanners:
 
 ```r
 data.harmonized <- combat(dat=dat, batch=batch)
 ```
+
 The harmonized matrix is stored in
 ```r
 data.harmonized$dat.combat
