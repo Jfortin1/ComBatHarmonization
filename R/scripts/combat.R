@@ -1,8 +1,21 @@
-combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
+#dat=matrix(rnorm(10000), 1000,10)
+#batch = c(1,1,1,1,1,2,2,2,2,2)
+#mod = model.matrix(~c(1,2,1,2,1,2,1,2,1,2))
+#a <- combat(dat,batch,mod)
+#b <- combat(dat,batch,mod, eb=FALSE)
+source("utils.R")
+
+
+combat <- function(dat, batch, mod=NULL, eb=TRUE){
+  if (eb){
+      cat("[combat] Performing ComBat with empirical Bayes\n")
+  } else {
+      cat("[combat] Performing ComBat without empirical Bayes (L/S model)\n")
+  }
   # make batch a factor and make a set of indicators for batch
   batch <- as.factor(batch)
   batchmod <- model.matrix(~-1+batch)  
-  cat("Found",nlevels(batch),'batches\n')
+  cat("[combat] Found",nlevels(batch),'batches\n')
   
   # A few other characteristics on the batches
   n.batch <- nlevels(batch)
@@ -38,7 +51,7 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
     
   
   ##Standardize Data across features
-  cat('[combat ]Standardizing Data across features\n')
+  cat('[combat] Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
   
       
@@ -53,7 +66,12 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
   s.data <- (dat-stand.mean)/(sqrt(var.pooled)%*%t(rep(1,n.array)))
   
   ##Get regression batch effect parameters
-  cat("[combat] Fitting L/S model and finding priors\n")
+  if (eb){
+      cat("[combat] Fitting L/S model and finding priors\n")
+  } else {
+      cat("[combat] Fitting L/S model\n")
+  }
+  
   batch.design <- design[,1:n.batch]
   gamma.hat <- solve(t(batch.design)%*%batch.design)%*%t(batch.design)%*%t(as.matrix(s.data))
 
@@ -62,66 +80,46 @@ combat <- function(dat, batch, mod=NULL, par.prior=TRUE,prior.plots=FALSE) {
     delta.hat <- rbind(delta.hat,apply(s.data[,i], 1, var,na.rm=T))
   }
   
-  ##Find Priors
-  gamma.bar <- apply(gamma.hat, 1, mean)
-  t2 <- apply(gamma.hat, 1, var)
-  a.prior <- apply(delta.hat, 1, aprior)
-  b.prior <- apply(delta.hat, 1, bprior)
-  
-  
-  ##Plot empirical and parametric priors
-  
-  # if (prior.plots & par.prior){
-  #   par(mfrow=c(2,2))
-  #   tmp <- density(gamma.hat[1,])
-  #   plot(tmp,  type='l', main="Density Plot")
-  #   xx <- seq(min(tmp$x), max(tmp$x), length=100)
-  #   lines(xx,dnorm(xx,gamma.bar[1],sqrt(t2[1])), col=2)
-  #   qqnorm(gamma.hat[1,])	
-  #   qqline(gamma.hat[1,], col=2)	
-    
-  #   tmp <- density(delta.hat[1,])
-  #   invgam <- 1/rgamma(ncol(delta.hat),a.prior[1],b.prior[1])
-  #   tmp1 <- density(invgam)
-  #   plot(tmp,  typ='l', main="Density Plot", ylim=c(0,max(tmp$y,tmp1$y)))
-  #   lines(tmp1, col=2)
-  #   qqplot(delta.hat[1,], invgam, xlab="Sample Quantiles", ylab='Theoretical Quantiles')	
-  #   lines(c(0,max(invgam)),c(0,max(invgam)),col=2)	
-  #   title('Q-Q Plot')
-  # }
-  
-  ##Find EB batch adjustments
-  
+  # Empirical Bayes correction:
   gamma.star <- delta.star <- NULL
-  if(par.prior){
-    cat("[combat] Finding parametric adjustments\n")
-    for (i in 1:n.batch){
-        temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
-        gamma.star <- rbind(gamma.star,temp[1,])
-        delta.star <- rbind(delta.star,temp[2,])
-    }
-  }else{
-    cat("[combat] Finding nonparametric adjustments\n")
-    for (i in 1:n.batch){
-      temp <- int.eprior(as.matrix(s.data[,batches[[i]]]),gamma.hat[i,],delta.hat[i,])
-      gamma.star <- rbind(gamma.star,temp[1,])
-      delta.star <- rbind(delta.star,temp[2,])
-    }
-  }
-  
+  gamma.bar <- t2 <- a.prior <- b.prior <- NULL
+  if (eb){
+      ##Find Priors
+      gamma.bar <- apply(gamma.hat, 1, mean)
+      t2 <- apply(gamma.hat, 1, var)
+      a.prior <- apply(delta.hat, 1, aprior)
+      b.prior <- apply(delta.hat, 1, bprior)
+
+
+      ##Find EB batch adjustments
+      cat("[combat] Finding parametric adjustments\n")
+      for (i in 1:n.batch){
+          temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
+          gamma.star <- rbind(gamma.star,temp[1,])
+          delta.star <- rbind(delta.star,temp[2,])
+      }
+  } 
   
   ### Normalize the Data ###
   cat("[combat] Adjusting the Data\n")
-  
   bayesdata <- s.data
   j <- 1
   for (i in batches){
-    bayesdata[,i] <- (bayesdata[,i]-t(batch.design[i,]%*%gamma.star))/(sqrt(delta.star[j,])%*%t(rep(1,n.batches[j])))
+    if (eb){
+        bayesdata[,i] <- (bayesdata[,i]-t(batch.design[i,]%*%gamma.star))/(sqrt(delta.star[j,])%*%t(rep(1,n.batches[j])))
+    } else {
+        bayesdata[,i] <- (bayesdata[,i]-t(batch.design[i,]%*%gamma.hat))/(sqrt(delta.hat[j,])%*%t(rep(1,n.batches[j])))
+    }
     j <- j+1
   }
   
   bayesdata <- (bayesdata*(sqrt(var.pooled)%*%t(rep(1,n.array))))+stand.mean
-  
-  return(bayesdata)
-  
+  return(list(dat.combat=bayesdata, 
+    gamma.hat=gamma.hat, delta.hat=delta.hat, 
+    gamma.star=gamma.star, delta.star=delta.star, 
+    gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior)
+  )
 }
+
+
+
