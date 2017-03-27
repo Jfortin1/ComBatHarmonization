@@ -6,7 +6,7 @@
 
 ## 2. Multi-Site Harmonization
 
-ComBat estimates scanner-specific location and scale parameters, at each feature, and pools information across features using empirical Bayes to improve the estimation of those parameters for small sample size studies.  
+ComBat estimates scanner-specific location and scale parameters, for each feature separately, but pools information across features using empirical Bayes to improve the estimation of those parameters for small sample size studies.  
 
 ### 2.1 Full ComBat with empirical Bayes
 
@@ -39,7 +39,17 @@ The `data.harmonized` object also contains the different parameters estimated by
 
 ### 2.3 ComBat without empirical Bayes
 
-Sometimes, 
+Sometimes, it is preferable not to pool information across features, for instance if:
+- (1) The number of features is substantially smaller than the number of participants (p << n) or
+- (2) The prior distributions used in ComBat do not fit well the data
+
+An example of (2) is when the site/scanner effects are highly heteregenous across features, for instance differential scanner effects between white matter (WM) or grey matter (GM) voxels. To run the ComBat model without empirical Bayes, which boils down to fitting a location/shift (L/S) model for each feature separately, the option `eb=FALSE` can be used:
+
+```{r}
+data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
+```
+
+
 
 
 
