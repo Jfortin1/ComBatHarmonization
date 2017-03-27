@@ -74,6 +74,7 @@ data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
 
 ## 3. Visualization
 
+Coming soon.
 
 
 
