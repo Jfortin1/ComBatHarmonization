@@ -16,7 +16,7 @@ The  `combat` function is the main function. It requires two mandatory arguments
 
 For illustration purpose, let's simulate an imaging dataset with n=10 participants, acquired on 2 scanners, with 5 participants each, with p=10000 voxels per scan. 
 
-```{lang=r}
+```r
 source("combat.R"); source("utils.R");
 p=10000
 n=10
@@ -25,11 +25,11 @@ dat = matrix(runif(p*n), p, n) #Data matrix
 ```
 To harmonize the data across the 2 scanners:
 
-```{r}
+```r
 data.harmonized <- combat(dat=dat, batch=batch)
 ```
 The harmonized matrix is stored in
-```{r}
+```r
 data.harmonized$dat.combat
 ```
 The `data.harmonized` object also contains the different parameters estimated by ComBat:
@@ -45,7 +45,7 @@ Sometimes, it is preferable not to pool information across features, for instanc
 
 An example of (2) is when the site/scanner effects are highly heteregenous across features, for instance differential scanner effects between white matter (WM) or grey matter (GM) voxels exist. To run the ComBat model without empirical Bayes, which boils down to fitting a location/shift (L/S) model for each feature separately, the option `eb=FALSE` can be used:
 
-```{r}
+```r
 data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
 ```
 
