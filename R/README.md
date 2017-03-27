@@ -1,6 +1,6 @@
 # ComBat harmonization in R
 
-##### Installation
+## 1. Installation
 
 - Load the two scripts `/scripts/combat.R` and `scripts/utils.R` into R
 
