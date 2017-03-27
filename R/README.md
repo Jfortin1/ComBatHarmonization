@@ -51,8 +51,21 @@ disease <- as.factor(c(1,2,1,2,1,2,1,2,1,2)) # Categorical variable
 We used `as.factor` to make sure that `disease` is a categorical variable. We create a model matrix using the `model.matrix` function:
 ```
 mod <- model.matrix(~age+disease)
+mod
+> mod
+   (Intercept) age disease2
+1            1  82        0
+2            1  70        1
+3            1  68        0
+4            1  66        1
+5            1  80        0
+6            1  69        1
+7            1  72        0
+8            1  76        1
+9            1  74        0
+10           1  80        1
 ```
-The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second disease group (the first disease group is taken as the baseline group). Note that including an intercept in the `mod` matrix does not change the results; ComBat automatically removes intercepts from the `mod` matrix. We now harmonize the data:
+The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second disease group (the first disease group is taken as the baseline group). Note that including an intercept in the model matrix does not change the results; ComBat automatically removes intercepts from the `mod` matrix. We now harmonize the data:
 
 ```r
 combat.harmonized <- combat(dat=dat, batch=batch, mod=mod)
