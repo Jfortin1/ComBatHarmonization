@@ -39,17 +39,15 @@ The ComBat algorithm also accepts an optional argument `mod`, which is a matrix 
 age <- c(82,70,68,66,80,69,72,76,74,80) # Continuous variable
 disease <- as.factor(c(1,2,1,2,1,2,1,2,1,2)) # Categorical variable
 ```
-We used `as.factor` to make sure that disease is a categorical variable. We can create the model matrix using the `model.matrix` function:
+We used `as.factor` to make sure that `disease` is a categorical variable. We create a model matrix using the `model.matrix` function:
 ```
 mod <- model.matrix(~age+disease)
 ```
-The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second disease group (the first disease group is taken as the baseline group). Note that including an intercept in the `mod` matrix does not change the results; Combat automatically removes intercepts from the `mod` matrix when fitting the models. We now harmonize the data:
+The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second disease group (the first disease group is taken as the baseline group). Note that including an intercept in the `mod` matrix does not change the results; ComBat automatically removes intercepts from the `mod` matrix. We now harmonize the data:
 
 ```r
 combat.harmonized <- combat(dat=dat, batch=batch, mod=mod)
 ```
-
-
 
 ### 2.2 ComBat without empirical Bayes
 
