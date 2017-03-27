@@ -9,13 +9,18 @@
 
 ## 1. Installation
  
-To use ComBat, the following scripts will need to be in the Matlab path:
+To use ComBat, the following scripts will need to be available in the Matlab path:
 - `aprior.m`
 - `bprior.m`
 - `itSol.m`
 - `postmean.m`
 - `postvar.m`
 - `combat.m`
+
+The directory containing those scripts can be added to the Matlab path as follows:
+```matlab
+addPath('path/to/the/scripts/folder');
+```
 
 <div id='id-section2'/>
 
