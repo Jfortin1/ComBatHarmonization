@@ -42,7 +42,7 @@ For illustration purpose, let's simulate an imaging dataset with n=10 participan
 p=10000;
 n=10;
 batch = [1 1 1 1 1 2 2 2 2 2]; %Batch variable for the scanner id
-dat = randn(p,n); %Data matrix
+dat = randn(p,n); %Random data matrix
 ```
 and let simulate an age and disease variable: 
 ```matlab
