@@ -46,8 +46,7 @@ The reference implementation of ComBat is written in R and is part of the `sva` 
 
 ## 3. Testing
 
-
-
+The `Testing` directory contains code for comparing and testing the outputs from R and Matlab. 
 
 
 
