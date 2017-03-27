@@ -33,6 +33,7 @@ The harmonized matrix is stored in `data.harmonized$dat.combat`. The `data.harmo
 - `gamma.hat` and `delta.hat`: Estimated location and shift (L/S) parameters before empirical Bayes.
 - `gamma.star` and `delta.star`: Empirical Bayes estimated L/S parameters.
 - `gamma.bar`, `t2`, `a.prior` and `b.prior`: esimated prior distributions parameters.
+
 The ComBat algorithm also accepts an optional argument `mod`, which is a matrix containing the outcome of interest and other biological covariates. This is recommended when the goal of the downstream statiatical analyses is to look for associations between the imaging data and the biological variables; this will make sure to preserve the biological variability while removing the variability associated with site/scanner. For instance, suppose we want to remove the inter-scanner variability in our simulated dataset, but we want to preserve the variability associated with age and disease:
 ```r
 age <- c(82,70,68,66,80,69,72,76,74,80) # Continuous variable
