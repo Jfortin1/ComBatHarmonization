@@ -61,7 +61,7 @@ An example of (2) is when the site/scanner effects are highly heteregenous acros
 data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
 ```
 
-
+## 3. Visualization
 
 
 
