@@ -2,13 +2,8 @@
 
 ##### Installation
 
-```{r}
-library(devtools)
-install_github("jfortin1/RAVEL")
-```
+- Load the two scripts `/scripts/combat.R` and `scripts/utils.R` into R
 
-
-<div id='id-section2'/>
 ## 2. Image preprocessing 
 
 
