@@ -49,7 +49,7 @@ age <- c(82,70,68,66,80,69,72,76,74,80) # Continuous variable
 disease <- as.factor(c(1,2,1,2,1,2,1,2,1,2)) # Categorical variable
 ```
 We used `as.factor` to make sure that `disease` is a categorical variable. We create a model matrix using the `model.matrix` function:
-```
+```r
 mod <- model.matrix(~age+disease)
 mod
 > mod
