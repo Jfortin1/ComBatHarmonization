@@ -65,7 +65,7 @@ mod
 9            1  74        0
 10           1  80        1
 ```
-The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second disease group (the first disease group is taken as the baseline group). Note that including an intercept in the model matrix does not change the results; ComBat automatically removes intercepts from the `mod` matrix. We now harmonize the data:
+The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second level of the disease variable (the first level is taken as the baseline group). Note that including an intercept in the model matrix will not change the results of the algorithm; ComBat automatically removes the intercept from the model matrix when fitting the models. We now harmonize the data:
 
 ```r
 combat.harmonized <- combat(dat=dat, batch=batch, mod=mod)
