@@ -10,7 +10,7 @@ The  `combat` function is the main function. It requires two mandatory arguments
 - a data matrix (p x n) `dat` for which the p rows are features, and the n columns are participants. 
 - a numeric or character vector `batch` of length n indicating the site/scanner/study id. 
 
-For illustration purpose, let's simulate an imaging dataset with n=10 participants, acquired on 2 scanners, with 5 participants each. Suppose that each image has p=10000 voxels each. 
+For illustration purpose, let's simulate an imaging dataset with n=10 participants, acquired on 2 scanners, with 5 participants each, with p=10000 voxels per scan. 
 
 ```{r}
 source("combat.R"); source("utils.R");
