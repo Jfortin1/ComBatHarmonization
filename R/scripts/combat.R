@@ -1,3 +1,10 @@
+# Author: Jean-Philippe Fortin 
+# Email: fortin946@gmail.com
+# Date: March 27 2017
+# License: Artistic 2.0
+# This is a modification of the code from the sva package that can be found at
+# https://bioconductor.org/packages/release/bioc/html/sva.html under the Artistic 2.0 license.
+
 #dat=matrix(rnorm(10000), 1000,10)
 #batch = c(1,1,1,1,1,2,2,2,2,2)
 #mod = model.matrix(~c(1,2,1,2,1,2,1,2,1,2))
