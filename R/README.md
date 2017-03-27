@@ -1,8 +1,17 @@
 # ComBat harmonization in R
 
+## Table of content
+- [1. Installation](#id-section1)
+- [2. Harmonization](#id-section2)
+- [3. Visualization](#id-section3)
+
+<div id='id-section1'/>
+
 ## 1. Installation
  
 To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into an R session.
+
+<div id='id-section2'/>
 
 ## 2. Multi-Site Harmonization
 
@@ -60,6 +69,8 @@ An example of (2) is when the site/scanner effects are highly heteregenous acros
 ```r
 data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
 ```
+
+<div id='id-section3'/>
 
 ## 3. Visualization
 
