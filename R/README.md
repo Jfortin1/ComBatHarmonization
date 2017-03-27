@@ -2,7 +2,7 @@
 
 ## 1. Installation
  
- To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into an R session.
+To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into an R session.
 
 ## 2. Multi-Site Harmonization
 
@@ -29,18 +29,26 @@ We use the function `combat` to harmonize the data across the 2 scanners:
 ```r
 data.harmonized <- combat(dat=dat, batch=batch)
 ```
-The harmonized matrix is stored in
-```r
-data.harmonized$dat.combat
-```
-
-The ComBat algorithm also accepts an optional argument `mod` that models the biological variability in the data. 
-
-
-The `data.harmonized` object also contains the different parameters estimated by ComBat:
+The harmonized matrix is stored in `data.harmonized$dat.combat`. The `data.harmonized` object also contains the different parameters estimated by ComBat:
 - `gamma.hat` and `delta.hat`: Estimated location and shift (L/S) parameters before empirical Bayes.
 - `gamma.star` and `delta.star`: Empirical Bayes estimated L/S parameters.
 - `gamma.bar`, `t2`, `a.prior` and `b.prior`: esimated prior distributions parameters.
+The ComBat algorithm also accepts an optional argument `mod`, which is a matrix containing the outcome of interest and other biological covariates. This is recommended when the goal of the downstream statiatical analyses is to look for associations between the imaging data and the biological variables; this will make sure to preserve the biological variability while removing the variability associated with site/scanner. For instance, suppose we want to remove the inter-scanner variability in our simulated dataset, but we want to preserve the variability associated with age and disease:
+```r
+age <- c(82,70,68,66,80,69,72,76,74,80) # Continuous variable
+disease <- as.factor(c(1,2,1,2,1,2,1,2,1,2)) # Categorical variable
+```
+We used `as.factor` to make sure that disease is a categorical variable. We can create the model matrix using the `model.matrix` function:
+```
+mod <- model.matrix(~age+disease)
+```
+The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second disease group (the first disease group is taken as the baseline group). Note that including an intercept in the `mod` matrix does not change the results; Combat automatically removes intercepts from the `mod` matrix when fitting the models. We now harmonize the data:
+
+```r
+combat.harmonized <- combat(dat=dat, batch=batch, mod=mod)
+```
+
+
 
 ### 2.2 ComBat without empirical Bayes
 
