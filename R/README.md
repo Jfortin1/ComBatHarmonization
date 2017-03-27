@@ -29,17 +29,20 @@ We use the function `combat` to harmonize the data across the 2 scanners:
 ```r
 data.harmonized <- combat(dat=dat, batch=batch)
 ```
-
 The harmonized matrix is stored in
 ```r
 data.harmonized$dat.combat
 ```
+
+The ComBat algorithm also accepts an optional argument `mod` that models the biological variability in the data. 
+
+
 The `data.harmonized` object also contains the different parameters estimated by ComBat:
 - `gamma.hat` and `delta.hat`: Estimated location and shift (L/S) parameters before empirical Bayes.
 - `gamma.star` and `delta.star`: Empirical Bayes estimated L/S parameters.
 - `gamma.bar`, `t2`, `a.prior` and `b.prior`: esimated prior distributions parameters.
 
-### 2.3 ComBat without empirical Bayes
+### 2.2 ComBat without empirical Bayes
 
 Sometimes, it is preferable not to pool information across features, for instance if:
 - (1) The number of features is substantially smaller than the number of participants (p << n) or
