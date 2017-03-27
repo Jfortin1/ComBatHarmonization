@@ -1,8 +1,8 @@
 # ComBat harmonization in R
 
 ## 1. Installation
-
-- Load the two scripts `/scripts/combat.R` and `scripts/utils.R` into R
+ 
+ To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into an R session.
 
 ## 2. Multi-Site Harmonization
 
