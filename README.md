@@ -15,6 +15,7 @@
 ## Table of content
 - [1. Introduction](#id-section1)
 - [2. Software](#id-section2)
+- [3. Testing](#id-section3)
 
 <div id='id-section1'/>
 
@@ -40,6 +41,12 @@ The reference implementation of ComBat is written in R and is part of the `sva` 
 **Tutorials, instructions and examples for using ComBat:**
 - [R implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
 - [Matlab implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
+
+<div id='id-section2'/>
+
+## 3. Testing
+
+
 
 
 
