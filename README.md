@@ -1,5 +1,5 @@
 # ComBatHarmonization
-### Multi-site harmonization with ComBat
+### Multi-site harmonization with ComBat for imaging data
 
 --------
 **Maintainer**: Jean-Philippe Fortin, fortin946@gmail.com
