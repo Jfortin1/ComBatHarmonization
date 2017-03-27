@@ -46,8 +46,8 @@ dat = randn(p,n); %Data matrix
 ```
 and let simulate an age and disease variable: 
 ```matlab
-age = [82 70 68 66 80 69 72 76 74 80]' % Continuous variable
-disease = [1 2 1 2 1 2 1 2 1 2]' % Categorical variable
+age = [82 70 68 66 80 69 72 76 74 80]'; % Continuous variable
+disease = [1 2 1 2 1 2 1 2 1 2]'; % Categorical variable
 ```
 We create a p x 2 model matrix with age as the first column, and the second disease group as a dummy variable for the second column (disease=1 being the baseline category):
 ```matlab
