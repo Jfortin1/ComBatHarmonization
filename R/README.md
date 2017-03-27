@@ -6,7 +6,7 @@ To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` in
 
 ## 2. Multi-Site Harmonization
 
-ComBat estimates scanner-specific location and scale parameters, for each feature separately, but pools information across features using empirical Bayes to improve the estimation of those parameters for small sample size studies.  
+ComBat estimates scanner-specific location and scale parameters, for each feature separately, and pools information across features using empirical Bayes to improve the estimation of those parameters for small sample size studies.  
 
 ### 2.1 Full ComBat with empirical Bayes
 
