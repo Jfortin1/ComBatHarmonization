@@ -6,7 +6,7 @@
 
 ## 2. Multi-Site Harmonization
 
-Two mandatory inputs are needed: 
+The  `combat` function is the main function. It requires two mandatory arguments:
 - a data matrix (p x n) `dat` for which the p rows are features, and the n columns are participants. 
 - a numeric or character vector `batch` of length n indicating the site/scanner/study id. 
 
