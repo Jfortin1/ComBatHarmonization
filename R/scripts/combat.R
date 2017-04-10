@@ -116,7 +116,7 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE){
   return(list(dat.combat=bayesdata, 
     gamma.hat=gamma.hat, delta.hat=delta.hat, 
     gamma.star=gamma.star, delta.star=delta.star, 
-    gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior)
+    gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=mod)
   )
 }
 
