@@ -53,7 +53,7 @@ it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
 #xmin: minimum value for x to be considered
 #xmax: maximum value for x to be considered
 #step=1: step for the grid; must be a positive integer
-createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
+createMatchingIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 
 	stopifnot(length(x)==length(batch))
 	batches <- unique(batch)
@@ -61,7 +61,7 @@ createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 	x_per_batch <- split(x, f=batch)[batches]
 	if (is.null(xmin)) xmin <- min(x)
 	if (is.null(xmax)) xmax <- max(x)
-	grid <- seq(min,max,step)
+	grid <- seq(xmin,xmax,step)
 	n.bins <- length(grid)-1
 
 	# Creating count matrix:
@@ -79,7 +79,7 @@ createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 		for (j in 1:n.batches){
 			min <- mins[i]
 			if (min!=0){
-				cand <- which(x >= grid[i] & x < grid[i+1] & ==batches[j])
+				cand <- which(x >= grid[i] & x < grid[i+1] & batch==batches[j])
 				cand <- sample(cand,min) # Sampling at random
 				indices <- c(indices, cand)
 			}
