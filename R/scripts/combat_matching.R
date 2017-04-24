@@ -5,7 +5,11 @@
 # If using this code, make sure you agree and accept this license.  
 
 # Devel branch of combat for matched samples:
-combat_matching <- function(dat, batch, mod=NULL, eb=TRUE){
+combat_matching <- function(dat, batch, training.indices=1:length(batch), mod=NULL, eb=TRUE){
+  training.yesno <- !isTRUE(all.equal(sort(training.indices), 1:length(batch)))
+  if (training.yesno){
+      cat("[combat] You chose to train ComBat on a subset of the data\n")
+  }
   if (eb){
       cat("[combat] Performing ComBat with empirical Bayes\n")
   } else {

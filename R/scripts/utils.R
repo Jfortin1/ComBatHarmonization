@@ -61,7 +61,7 @@ createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 	x_per_batch <- split(x, f=batch)[batches]
 	if (is.null(xmin)) xmin <- min(x)
 	if (is.null(xmax)) xmax <- max(x)
-	grid <- seq(min,max,step)
+	grid <- seq(xmin,xmax,step)
 	n.bins <- length(grid)-1
 
 	# Creating count matrix:
@@ -79,8 +79,10 @@ createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 		for (j in 1:n.batches){
 			min <- mins[i]
 			if (min!=0){
-				cand <- which(x >= grid[i] & x < grid[i+1] & ==batches[j])
-				cand <- sample(cand,min) # Sampling at random
+				cand <- which(x >= grid[i] & x < grid[i+1] & batch==batches[j])
+				if (length(cand) !=1){
+					cand <- sample(cand,min) # Sampling at random	
+				} 
 				indices <- c(indices, cand)
 			}
 		}
