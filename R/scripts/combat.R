@@ -116,9 +116,7 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE){
   return(list(dat.combat=bayesdata, 
     gamma.hat=gamma.hat, delta.hat=delta.hat, 
     gamma.star=gamma.star, delta.star=delta.star, 
-    gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=mod)
+    gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=mod, 
+    stand.mean=stand.mean, stand.sd=sqrt(var.pooled)[,1])
   )
 }
-
-
-
