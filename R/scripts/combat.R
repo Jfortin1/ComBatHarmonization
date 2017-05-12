@@ -5,16 +5,16 @@
 # If using this code, make sure you agree and accept this license.  
 
 
-combat <- function(dat, batch, mod=NULL, eb=TRUE){
+combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE){
   if (eb){
-      cat("[combat] Performing ComBat with empirical Bayes\n")
+      if (verbose) cat("[combat] Performing ComBat with empirical Bayes\n")
   } else {
-      cat("[combat] Performing ComBat without empirical Bayes (L/S model)\n")
+      if (verbose) cat("[combat] Performing ComBat without empirical Bayes (L/S model)\n")
   }
   # make batch a factor and make a set of indicators for batch
   batch <- as.factor(batch)
   batchmod <- model.matrix(~-1+batch)  
-  cat("[combat] Found",nlevels(batch),'batches\n')
+  if (verbose) cat("[combat] Found",nlevels(batch),'batches\n')
   
   # A few other characteristics on the batches
   n.batch <- nlevels(batch)
@@ -32,7 +32,7 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE){
   design <- as.matrix(design[,!check])
   
   # Number of covariates or covariate levels
-  cat("[combat] Adjusting for",ncol(design)-ncol(batchmod),'covariate(s) or covariate level(s)\n')
+  if (verbose) cat("[combat] Adjusting for",ncol(design)-ncol(batchmod),'covariate(s) or covariate level(s)\n')
   
   # Check if the design is confounded
   if(qr(design)$rank<ncol(design)){
@@ -50,7 +50,7 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE){
     
   
   ##Standardize Data across features
-  cat('[combat] Standardizing Data across features\n')
+  if (verbose) cat('[combat] Standardizing Data across features\n')
   B.hat <- solve(t(design)%*%design)%*%t(design)%*%t(as.matrix(dat))
   
       
@@ -66,9 +66,9 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE){
   
   ##Get regression batch effect parameters
   if (eb){
-      cat("[combat] Fitting L/S model and finding priors\n")
+      if (verbose) cat("[combat] Fitting L/S model and finding priors\n")
   } else {
-      cat("[combat] Fitting L/S model\n")
+      if (verbose) cat("[combat] Fitting L/S model\n")
   }
   
   batch.design <- design[,1:n.batch]
@@ -91,7 +91,7 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE){
 
 
       ##Find EB batch adjustments
-      cat("[combat] Finding parametric adjustments\n")
+      if (verbose) cat("[combat] Finding parametric adjustments\n")
       for (i in 1:n.batch){
           temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
           gamma.star <- rbind(gamma.star,temp[1,])
@@ -100,7 +100,7 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE){
   } 
   
   ### Normalize the Data ###
-  cat("[combat] Adjusting the Data\n")
+  if (verbose) cat("[combat] Adjusting the Data\n")
   bayesdata <- s.data
   j <- 1
   for (i in batches){
