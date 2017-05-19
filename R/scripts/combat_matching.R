@@ -2,7 +2,7 @@
 # This is a modification of the ComBat function code from the sva package that can be found at
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
 # The original and present code is under the Artistic License 2.0.
-# If using this code, make sure you agree and accept this license.  
+
 
 # Devel branch of combat for matched samples:
 combat_matching <- function(dat, batch, training.indices=1:length(batch), mod=NULL, eb=TRUE){
@@ -10,6 +10,7 @@ combat_matching <- function(dat, batch, training.indices=1:length(batch), mod=NU
   if (training.yesno){
       cat("[combat] You chose to train ComBat on a subset of the data\n")
   }
+
   if (eb){
       cat("[combat] Performing ComBat with empirical Bayes\n")
   } else {
@@ -30,6 +31,7 @@ combat_matching <- function(dat, batch, training.indices=1:length(batch), mod=NU
   n.array <- sum(n.batches)
   
   #combine batch variable and covariates
+
   design <- cbind(batchmod,mod)
   # check for intercept in covariates, and drop if present
   check <- apply(design, 2, function(x) all(x == 1))

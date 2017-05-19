@@ -53,7 +53,7 @@ it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
 #xmin: minimum value for x to be considered
 #xmax: maximum value for x to be considered
 #step=1: step for the grid; must be a positive integer
-createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
+createMatchingIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 
 	stopifnot(length(x)==length(batch))
 	batches <- unique(batch)
@@ -80,9 +80,12 @@ createMatchedIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 			min <- mins[i]
 			if (min!=0){
 				cand <- which(x >= grid[i] & x < grid[i+1] & batch==batches[j])
+
 				if (length(cand) !=1){
 					cand <- sample(cand,min) # Sampling at random	
 				} 
+
+
 				indices <- c(indices, cand)
 			}
 		}
