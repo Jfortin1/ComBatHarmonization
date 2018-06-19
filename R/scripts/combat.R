@@ -6,9 +6,10 @@
 
 
 combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE){
-
+  library()
   .checkConstantRows <- function(dat){
-    ns <- sum(rowSds(data)==0)
+    sds <- unlist(apply(data, 1, sd))
+    ns <- sum(sds==0)
     if (ns>0){
       message <- paste0(ns, " rows (features) were found to be constant across samples. Please remove these rows before running ComBat.")
       stop(message)
