@@ -2,7 +2,15 @@
 %batch = [1 1 1 1 1 2 2 2 2 2];
 %mod = [1 2 1 2 1 2 1 2 1 2]';
 
+
+
 function bayesdata = combat(dat, batch, mod)
+    [sds] = std(dat')';
+    wh = find(sds==0);
+    [ns,ms] = size(wh);
+    if ns>0
+        error('Error. There are rows with constant values across samples. Remove these rows and rerun ComBat.')
+    end
 	batchmod = dummyvar(batch);
 	n_batch = size(batchmod,2);
 	levels = unique(batch);
