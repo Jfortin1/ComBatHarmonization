@@ -6,6 +6,15 @@
 
 
 combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE){
+
+  .checkConstantRows <- function(dat){
+    ns <- sum(rowSds(data)==0)
+    if (ns>0){
+      message <- paste0(ns, " rows (features) were found to be constant across samples. Please remove these rows before running ComBat.")
+      stop(message)
+    }
+  }
+  .checkConstantRows(dat)
   if (eb){
       if (verbose) cat("[combat] Performing ComBat with empirical Bayes\n")
   } else {
