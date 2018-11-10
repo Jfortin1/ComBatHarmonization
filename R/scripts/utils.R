@@ -3,6 +3,7 @@
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
 # The original and present code is under the Artistic License 2.0.
 # If using this code, make sure you agree and accept this license.  
+library(matrixStats)
 
 # Following four find empirical hyper-prior values
 aprior <- function(gamma.hat){
@@ -22,18 +23,32 @@ postvar <- function(sum2,n,a,b){
 	(.5*sum2+b)/(n/2+a-1)
 }
 
-
+apriorMat <- function(gamma.hat) {
+  m <- rowMeans2(gamma.hat)
+  s2 <- rowVars(gamma.hat)
+  return((2*s2+m^2)/s2)
+}
+bpriorMat <- function(gamma.hat) {
+  m <- rowMeans2(gamma.hat)
+  s2 <- rowVars(gamma.hat)
+  return((m*s2+m^3)/s2)
+}
 # Pass in entire data set, the design matrix for the entire data, the batch means, the batch variances, priors (m, t2, a, b), columns of the data  matrix for the batch. Uses the EM to find the parametric batch adjustments
 
 it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
-	n <- apply(!is.na(sdat),1,sum)
+	#n <- apply(!is.na(sdat),1,sum)
+	n <- rowSums2(!is.na(sdat))
 	g.old <- g.hat
 	d.old <- d.hat
 	change <- 1
 	count <- 0
+	ones <- rep(1,ncol(sdat))
+
 	while(change>conv){
 		g.new  <- postmean(g.hat,g.bar,n,d.old,t2)
-		sum2   <- apply((sdat-g.new%*%t(rep(1,ncol(sdat))))^2, 1, sum,na.rm=T)
+		#sum2   <- apply((sdat-g.new%*%t(rep(1,ncol(sdat))))^2, 1, sum,na.rm=T)
+		#sum2   <- apply((sdat-tcrossprod(g.new, rep(1,ncol(sdat))))^2, 1, sum,na.rm=T)
+		sum2 <- rowSums2((sdat-tcrossprod(g.new, ones))^2, na.rm=TRUE)
 		d.new  <- postvar(sum2,n,a,b)
 		change <- max(abs(g.new-g.old)/g.old,abs(d.new-d.old)/d.old)
 		g.old <- g.new
