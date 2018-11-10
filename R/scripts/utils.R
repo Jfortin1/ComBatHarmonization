@@ -37,7 +37,7 @@ bpriorMat <- function(gamma.hat) {
 
 it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
 	#n <- apply(!is.na(sdat),1,sum)
-	n <- rowSums2(!is.na(sdat))
+	n <- rowSums(!is.na(sdat))
 	g.old <- g.hat
 	d.old <- d.hat
 	change <- 1
