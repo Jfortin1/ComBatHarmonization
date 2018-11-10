@@ -10,8 +10,36 @@ norm <- norm$dat.combat
 write.csv(norm, quote=FALSE, file="data/testdata_combat_r.csv", row.names=FALSE)
 
 
+
+old <- norm
 #col <- pheno+1
 #plot(colMeans(data), col=col)
 #plot(colMeans(norm), col=col)
 
+
+
+norm <- combat(data, batch=batch, mod=mod)
+
+dat <- data
+dat <- as.matrix(dat)
+verbose=TRUE
+   .checkConstantRows <- function(dat){
+     
+     sds <- rowSds(dat)
+     ns <- sum(sds==0)
+     if (ns>0){
+       message <- paste0(ns, " rows (features) were found to be constant across samples. Please remove these rows before running ComBat.")
+       stop(message)
+     }
+   }
+   .checkConstantRows(dat)
+   if (eb){
+       if (verbose) cat("[combat] Performing ComBat with empirical Bayes\n")
+   } else {
+       if (verbose) cat("[combat] Performing ComBat without empirical Bayes (L/S model)\n")
+   }
+   # make batch a factor and make a set of indicators for batch
+   batch <- as.factor(batch)
+   batchmod <- model.matrix(~-1+batch)  
+   if (verbose) cat("[combat] Found",nlevels(batch),'batches\n')
 
