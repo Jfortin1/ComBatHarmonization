@@ -60,6 +60,10 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 
 The `Testing` directory contains code for comparing and testing the outputs from R and Matlab. 
 
+## 5. News
+
+05-19-2019: Added the option of running the non-parametric version of ComBat in the R implementation. 
+
 
 
 
