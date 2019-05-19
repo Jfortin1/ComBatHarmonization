@@ -1,4 +1,4 @@
-nrow <- 10000
+nrow <- 200
 ncol <- 10
 data <- matrix(rnorm(nrow*ncol), nrow, ncol)
 # Let's introduce a biological effect:

@@ -6,7 +6,7 @@
 # Code optimization improved by Richard Beare 
 
 
-combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE){
+combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE){
   dat <- as.matrix(dat)
   
   .checkConstantRows <- function(dat){
@@ -100,13 +100,26 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE){
       b.prior <- bpriorMat(delta.hat)
       
       ##Find EB batch adjustments
-      if (verbose) cat("[combat] Finding parametric adjustments\n")
-      for (i in 1:n.batch){
-          temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
-          gamma.star <- rbind(gamma.star,temp[1,])
-          delta.star <- rbind(delta.star,temp[2,])
+      if (parametric){
+        if (verbose) cat("[combat] Finding parametric adjustments\n")
+        for (i in 1:n.batch){
+            temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
+            gamma.star <- rbind(gamma.star,temp[1,])
+            delta.star <- rbind(delta.star,temp[2,])
+        }
+      } else {
+        if (verbose) cat("[combat] Finding non-parametric adjustments\n")
+        for (i in 1:n.batch){
+            temp <- int.eprior(as.matrix(s.data[, batches[[i]]]),gamma.hat[i,], delta.hat[i,])
+            gamma.star <- rbind(gamma.star,temp[1,])
+            delta.star <- rbind(delta.star,temp[2,])
+        }
       }
+      
   } 
+
+
+
   
   ### Normalize the Data ###
   if (verbose) cat("[combat] Adjusting the Data\n")
