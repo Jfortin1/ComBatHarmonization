@@ -38,6 +38,11 @@ We use the function `combat` to harmonize the data across the 2 scanners:
 ```r
 data.harmonized <- combat(dat=dat, batch=batch)
 ```
+By default, this uses parametric adjustments. To following command must be used for non-parametric adjustments:
+```r
+data.harmonized <- combat(dat=dat, batch=batch, parametric=FALSE)
+```
+
 The harmonized matrix is stored in `data.harmonized$dat.combat`. The `data.harmonized` object also contains the different parameters estimated by ComBat:
 - `gamma.hat` and `delta.hat`: Estimated location and shift (L/S) parameters before empirical Bayes.
 - `gamma.star` and `delta.star`: Empirical Bayes estimated L/S parameters.
