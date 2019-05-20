@@ -62,6 +62,8 @@ The `Testing` directory contains code for comparing and testing the outputs from
 
 ## 5. News
 
+05-19-2019: Added the option of running the non-parametric version of ComBat in the Matlab implementation. 
+
 05-19-2019: Added the option of running the non-parametric version of ComBat in the R implementation. 
 
 
