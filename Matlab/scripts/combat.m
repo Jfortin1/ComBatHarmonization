@@ -1,10 +1,11 @@
+
 %data = randn(1000,10);
 %batch = [1 1 1 1 1 2 2 2 2 2];
 %mod = [1 2 1 2 1 2 1 2 1 2]';
 
 
 
-function bayesdata = combat(dat, batch, mod)
+function bayesdata = combat(dat, batch, mod, parametric)
     [sds] = std(dat')';
     wh = find(sds==0);
     [ns,ms] = size(wh);
@@ -83,14 +84,28 @@ function bayesdata = combat(dat, batch, mod)
 		b_prior=[b_prior bprior(delta_hat_cell{i})];
 	end
 
-	fprintf('[combat] Finding parametric adjustments\n')
-	gamma_star =[]; delta_star=[];
-	for i=1:n_batch
-		indices = batches{i};
-	    temp = itSol(s_data(:,indices),gamma_hat(i,:),delta_hat(i,:),gamma_bar(i),t2(i),a_prior(i),b_prior(i), 0.001);
-	    gamma_star = [gamma_star; temp(1,:)];
-	    delta_star = [delta_star; temp(2,:)];
-	end
+	
+	if parametric
+        fprintf('[combat] Finding parametric adjustments\n')
+        gamma_star =[]; delta_star=[];
+        for i=1:n_batch
+            indices = batches{i};
+            temp = itSol(s_data(:,indices),gamma_hat(i,:),delta_hat(i,:),gamma_bar(i),t2(i),a_prior(i),b_prior(i), 0.001);
+            gamma_star = [gamma_star; temp(1,:)];
+            delta_star = [delta_star; temp(2,:)];
+        end
+    end
+	    
+    if (1-parametric)
+        gamma_star =[]; delta_star=[];
+        fprintf('[combat] Finding non-parametric adjustments\n')
+        for i=1:n_batch
+            indices = batches{i};
+            temp = inteprior(s_data(:,indices),gamma_hat(i,:),delta_hat(i,:));
+            gamma_star = [gamma_star; temp(1,:)];
+            delta_star = [delta_star; temp(2,:)];
+        end
+    end
 	    
 	fprintf('[combat] Adjusting the Data\n')
 	bayesdata = s_data;

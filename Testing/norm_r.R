@@ -5,7 +5,7 @@ batch = c(1,1,1,1,1,2,2,2,2,2)
 pheno <- rep(0, ncol(data))
 pheno[c(1,3,5,7,9)] <- 1
 mod=model.matrix(~pheno)
-norm.parametric <- combat(data, batch=batch, mod=mod)
+norm.parametric <- combat(data, batch=batch, mod=mod, parametric=TRUE)
 norm.parametric <- norm.parametric$dat.combat
 norm.nonparametric <- combat(data, batch=batch, mod=mod, parametric=FALSE)
 norm.nonparametric <- norm.nonparametric$dat.combat

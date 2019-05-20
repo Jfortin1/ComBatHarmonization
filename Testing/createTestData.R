@@ -1,3 +1,4 @@
+set.seed(10)
 nrow <- 200
 ncol <- 10
 data <- matrix(rnorm(nrow*ncol), nrow, ncol)
