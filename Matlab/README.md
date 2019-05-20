@@ -15,6 +15,7 @@ To use ComBat, the following scripts will need to be available in the Matlab pat
 - `itSol.m`
 - `postmean.m`
 - `postvar.m`
+- `inteprior.m`
 - `combat.m`
 
 The directory containing those scripts can be added to the Matlab path as follows:
@@ -54,9 +55,15 @@ We create a n x 2 model matrix with age as the first column, and the second dise
 disease = dummyvar(disease);
 mod = [age disease(:,2)];
 ```
-We use the function `combat` to harmonize the data across the 2 scanners:
+We use the function `combat` to harmonize the data across the 2 scanners using parametric adjustements:
 ```matlab
-data_harmonized = combat(dat, batch, mod);
+data_harmonized = combat(dat, batch, mod, 1);
+```
+
+or using non-parametric adjustments:
+
+```matlab
+data_harmonized = combat(dat, batch, mod, 0);
 ```
 
 To use ComBat without a model matrix, simply set
