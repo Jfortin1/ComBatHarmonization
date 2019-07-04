@@ -5,9 +5,11 @@ batch = c(1,1,1,1,1,2,2,2,2,2)
 pheno <- rep(0, ncol(data))
 pheno[c(1,3,5,7,9)] <- 1
 mod=model.matrix(~pheno)
-norm.parametric <- combat(data, batch=batch, mod=mod, parametric=TRUE)
-norm.parametric <- norm.parametric$dat.combat
-norm.nonparametric <- combat(data, batch=batch, mod=mod, parametric=FALSE)
-norm.nonparametric <- norm.nonparametric$dat.combat
-write.csv(norm.parametric, quote=FALSE, file="data/testdata_combat_parametric_r.csv", row.names=FALSE)
-write.csv(norm.nonparametric, quote=FALSE, file="data/testdata_combat_nonparametric_r.csv", row.names=FALSE)
+norm.parametric.adjusted <- combat(data, batch=batch, mod=mod, parametric=TRUE)$dat.combat
+norm.nonparametric.adjusted <- combat(data, batch=batch, mod=mod, parametric=FALSE)$dat.combat
+norm.parametric.unadjusted <- combat(data, batch=batch, parametric=TRUE)$dat.combat
+norm.nonparametric.unadjusted <- combat(data, batch=batch, parametric=FALSE)$dat.combat
+write.csv(norm.parametric.adjusted, quote=FALSE, file="data/testdata_combat_parametric_adjusted_r.csv", row.names=FALSE)
+write.csv(norm.nonparametric.adjusted, quote=FALSE, file="data/testdata_combat_nonparametric_adjusted_r.csv", row.names=FALSE)
+write.csv(norm.parametric.unadjusted, quote=FALSE, file="data/testdata_combat_parametric_unadjusted_r.csv", row.names=FALSE)
+write.csv(norm.nonparametric.unadjusted, quote=FALSE, file="data/testdata_combat_nonparametric_unadjusted_r.csv", row.names=FALSE)
