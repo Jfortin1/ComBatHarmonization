@@ -5,19 +5,28 @@
 # If using this code, make sure you agree and accept this license. 
 # Code optimization improved by Richard Beare 
 
+# source("utils.R")
+# set.seed(10)
+# nrow <- 200
+# ncol <- 10
+# data <- matrix(rnorm(nrow*ncol), nrow, ncol)
+# data[,c(1,3,5,7,9)] <- data[,c(1,3,5,7,9)]+3
+# data[,6:10] <- (data[,6:10]+5)*1.5
+# batch = c(1,1,1,1,1,2,2,2,2,2)
+# pheno <- rep(0, ncol(data))
+# pheno[c(1,3,5,7,9)] <- 1
+# mod=model.matrix(~pheno)
+# dat=data
+# eb=TRUE
+# verbose=TRUE
+# parametric=TRUE
+
 
 combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE){
   dat <- as.matrix(dat)
-  
-  .checkConstantRows <- function(dat){
-    sds <- rowSds(dat)
-    ns <- sum(sds==0)
-    if (ns>0){
-      message <- paste0(ns, " rows (features) were found to be constant across samples. Please remove these rows before running ComBat.")
-      stop(message)
-    }
-  }
   .checkConstantRows(dat)
+  .checkNARows(dat)
+
   if (eb){
       if (verbose) cat("[combat] Performing ComBat with empirical Bayes\n")
   } else {
@@ -56,16 +65,36 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
     }
   }
     
+
+  ## Check for missing values
+  hasNAs <- any(is.na(dat))
+  if (hasNAs & verbose){
+    cat(paste0("[combat] Found ", sum(is.na(dat)), " missing data values. \n"))
+  }
   
   ##Standardize Data across features
   if (verbose) cat('[combat] Standardizing Data across features\n')
-  B.hat1 <- solve(crossprod(design))
-  B.hat1 <- tcrossprod(B.hat1, design)
-  B.hat <- tcrossprod(B.hat1, dat)
+  if (!hasNAs){
+    B.hat <- solve(crossprod(design))
+    B.hat <- tcrossprod(B.hat, design)
+    B.hat <- tcrossprod(B.hat, dat)
+  } else {
+    B.hat <- apply(dat, 1, .betaNA, design)
+  }
+  
+
   #Standarization Model
   grand.mean <- crossprod(n.batches/n.array, B.hat[1:n.batch,])
-  var.pooled <- ((dat-t(design%*%B.hat))^2)%*%rep(1/n.array,n.array)
   stand.mean <- crossprod(grand.mean, t(rep(1,n.array)))
+  if (!hasNAs){
+    factors <- (n.array/(n.array-1))
+    var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+  } else {
+    ns <- rowSums(!is.na(dat))
+    factors <- (ns/(ns-1))
+    var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+  }
+  
   
   if(!is.null(design)){
     tmp <- design;tmp[,c(1:n.batch)] <- 0
@@ -80,8 +109,13 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
       if (verbose) cat("[combat] Fitting L/S model\n")
   }
   batch.design <- design[,1:n.batch]
-  gamma.hat <- tcrossprod(solve(crossprod(batch.design, batch.design)), batch.design)
-  gamma.hat <- tcrossprod(gamma.hat, s.data)
+  if (!hasNAs){
+      gamma.hat <- tcrossprod(solve(crossprod(batch.design, batch.design)), batch.design)
+      gamma.hat <- tcrossprod(gamma.hat, s.data)
+  } else{
+      gamma.hat <- apply(s.data, 1, .betaNA, batch.design) 
+  }
+  
   delta.hat <- NULL
   for (i in batches){
     delta.hat <- rbind(delta.hat,rowVars(s.data, cols=i, na.rm=TRUE))
@@ -118,9 +152,6 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
       
   } 
 
-
-
-  
   ### Normalize the Data ###
   if (verbose) cat("[combat] Adjusting the Data\n")
   bayesdata <- s.data
@@ -139,6 +170,6 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
     gamma.hat=gamma.hat, delta.hat=delta.hat, 
     gamma.star=gamma.star, delta.star=delta.star, 
     gamma.bar=gamma.bar, t2=t2, a.prior=a.prior, b.prior=b.prior, batch=batch, mod=mod, 
-    stand.mean=stand.mean, stand.sd=sqrt(var.pooled)[,1])
+    stand.mean=stand.mean, stand.sd=sqrt(var.pooled))
   )
 }

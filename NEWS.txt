@@ -1,0 +1,7 @@
+Changes in Version 1.0.1:
+- R: ComBat now accepts missing values. Note: our way of calculating feature variances (rows) differs from the SVA package. 
+SVA: Variance denominator used when there is no missing values: n
+SVA: Variance denominator used when there are missing values: m-1 (m=total number of non-missing values)
+ComBatHarmonization: Variance denominator used when there is no missing values: n
+ComBatHarmonization: Variance denominator used when there are missing values: m (m=total number of non-missing values)
+By simulating missing values, we have shown that there is much more better agreement between the datasets. 

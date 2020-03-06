@@ -13,3 +13,10 @@ write.csv(norm.parametric.adjusted, quote=FALSE, file="data/testdata_combat_para
 write.csv(norm.nonparametric.adjusted, quote=FALSE, file="data/testdata_combat_nonparametric_adjusted_r.csv", row.names=FALSE)
 write.csv(norm.parametric.unadjusted, quote=FALSE, file="data/testdata_combat_parametric_unadjusted_r.csv", row.names=FALSE)
 write.csv(norm.nonparametric.unadjusted, quote=FALSE, file="data/testdata_combat_nonparametric_unadjusted_r.csv", row.names=FALSE)
+
+#data[1:2,4] <- NA
+#data[3,6] <- NA
+#norm.parametric.adjustedd <- combat(data, batch=batch, mod=mod, parametric=TRUE)$dat.combat
+#norm.nonparametric.adjustedd <- combat(data, batch=batch, mod=mod, parametric=FALSE)$dat.combat
+#norm.parametric.unadjustedd <- combat(data, batch=batch, parametric=TRUE)$dat.combat
+#norm.nonparametric.unadjustedd <- combat(data, batch=batch, parametric=FALSE)$dat.combat

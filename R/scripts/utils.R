@@ -5,6 +5,26 @@
 # If using this code, make sure you agree and accept this license.  
 library(matrixStats)
 
+
+.checkNARows <- function(dat){
+	nas <- rowSums(is.na(dat))
+	ns <- sum(nas==ncol(dat))
+	if (ns>0){
+	  message <- paste0(ns, " rows (features) were found to have missing values for all samples. Please remove these rows before running ComBat.")
+	  stop(message)
+	}
+}
+
+.checkConstantRows <- function(dat){
+	sds <- rowSds(dat, na.rm=TRUE)
+	ns <- sum(sds==0)
+	if (ns>0){
+	  message <- paste0(ns, " rows (features) were found to be constant across samples. Please remove these rows before running ComBat.")
+	  stop(message)
+	}
+}
+
+
 # Following four find empirical hyper-prior values
 aprior <- function(gamma.hat){
 	m=mean(gamma.hat)
@@ -132,3 +152,11 @@ createMatchingIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 	}
 	return(indices)
 }
+
+.betaNA <- function(yy,designn){
+      designn <- designn[!is.na(yy),]
+      yy <- yy[!is.na(yy)]
+      B <- solve(crossprod(designn), crossprod(designn, yy))
+      B
+}
+

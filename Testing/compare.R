@@ -1,5 +1,5 @@
 library(tidyverse)
-tol <- 10e-10
+tol <- 10e-4
 types <- c("parametric_adjusted",
 	"parametric_unadjusted",
 	"nonparametric_adjusted",
