@@ -49,24 +49,27 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 
 <div id='id-section2'/>
 
-## 3. Problem of missing values (NA and NaN)
+## 3. Problem of missing values in R(NA and NaN)
+
+- The data can now include missing values. 
+- Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values.
+
+## 5. Problem of missing values in Matlab (NA and NaN)
 
 - Make sure that your input data matrix to ComBat only includes finite values (no NA or NaN).
-- Make sure to remove constant rows (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values. 
+- Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values
 
 
-
-## 4. Testing
+## 5. Testing
 
 The `Testing` directory contains code for comparing and testing the outputs from R and Matlab. 
 
-## 5. News
+## 6. News
 
 05-19-2019: Added the option of running the non-parametric version of ComBat in the Matlab implementation. 
 
 05-19-2019: Added the option of running the non-parametric version of ComBat in the R implementation. 
 
-
-
+03-06-2020: ComBat in R now accepts missing values
 
 
