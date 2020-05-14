@@ -4,7 +4,7 @@
 --------
 **Maintainer**: Jean-Philippe Fortin, fortin946@gmail.com
 
-**License**: Artistic License 2.0
+**License**: MIT License 
 
 **References**: If you are using ComBat for the harmonization of multi-site imaging data, please cite the following papers:
 
