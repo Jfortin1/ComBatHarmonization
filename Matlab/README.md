@@ -65,7 +65,7 @@ The fourth argument, ```1```, indicates parametric adjustements. To perform non-
 data_harmonized = combat(dat, batch, mod, 0);
 ```
 
-To use ComBat without a model matrix, simply set
+To use ComBat without adjusting for biological variables, simply set
 ```matlab
 mod=[];
 ```
