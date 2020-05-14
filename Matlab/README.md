@@ -73,9 +73,7 @@ mod=[];
 
 <div id='id-section3'/>
 
-## 3. Visualization
 
-Coming soon.
 
 
 
