@@ -49,7 +49,8 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
   design <- as.matrix(design[,!check])
   
   # Number of covariates or covariate levels
-  if (verbose) cat("[combat] Adjusting for",ncol(design)-ncol(batchmod),'covariate(s) or covariate level(s)\n')
+  ncovariates <- ncol(design)-ncol(batchmod)
+  if (verbose) cat("[combat] Adjusting for ",ncovariates,' covariate(s) or covariate level(s)\n')
   
   # Check if the design is confounded
   if(qr(design)$rank<ncol(design)){
