@@ -41,11 +41,12 @@ The ComBat algorithm also accepts an optional input:
 
 ## 2. Software
 
-The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in both R and Matlab for the harmonization of imaging data. Our implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the same open-source license as the `sva` package, that is the Artistic License 2.0. 
+The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (previously named neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license, which is compatible with the Artistic License 2.0 of `sva`. 
 
 **Tutorials, instructions and examples for using ComBat:**
 - [R implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
 - [Matlab implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
+- [Python implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (previously neuroCombat)
 
 <div id='id-section2'/>
 
