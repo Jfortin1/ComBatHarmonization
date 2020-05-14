@@ -35,7 +35,7 @@ The  `combat` function is the main function. It requires two mandatory arguments
 - a data matrix (p x n) `dat` for which the p rows are features, and the n columns are participants. 
 - a numeric or character vector `batch` of length n indicating the site/scanner/study id.
 
-The ComBat algorithm also accepts an optional argument `mod`, which is a matrix containing the outcome of interest and other biological covariates. This is recommended when the goal of the downstream statiatical analyses is to look for associations between the imaging data and the biological variables; this will make sure to preserve the biological variability while removing the variability associated with site/scanner. 
+The ComBat algorithm also accepts an optional argument `mod`, which is a matrix containing the outcome of interest and other biological covariates. This is recommended when the goal of the downstream statistical analyses is to quantify associations between imaging data and biological variables; this will make sure to preserve the biological variability while removing the variability associated with site/scanner. 
 
 For illustration purpose, let's simulate an imaging dataset with n=10 participants, acquired on 2 scanners, with 5 participants each, with p=10000 voxels per scan. 
 
@@ -59,8 +59,7 @@ We use the function `combat` to harmonize the data across the 2 scanners using p
 ```matlab
 data_harmonized = combat(dat, batch, mod, 1);
 ```
-
-or using non-parametric adjustments:
+The fourth argument, ```1```, indicates parametric adjustements. To perform non-parametric adjustments, replace ```1``` by ```0``` as follows:
 
 ```matlab
 data_harmonized = combat(dat, batch, mod, 0);
