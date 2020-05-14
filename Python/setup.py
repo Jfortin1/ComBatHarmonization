@@ -3,8 +3,8 @@
 import setuptools
 
 setuptools.setup(
-  author="Jean-Philippe Fortin",
-  author_email='fortin946@gmail.com',
+  author="Jean-Philippe Fortin, Nick Cullen",
+  author_email='fortin946@gmail.com,',
   classifiers=[
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python :: 3.7',
