@@ -55,6 +55,7 @@ bpriorMat <- function(gamma.hat) {
 }
 # Pass in entire data set, the design matrix for the entire data, the batch means, the batch variances, priors (m, t2, a, b), columns of the data  matrix for the batch. Uses the EM to find the parametric batch adjustments
 
+# Helper function for parametric adjustements:
 it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
 	#n <- apply(!is.na(sdat),1,sum)
 	n <- rowSums(!is.na(sdat))
@@ -81,7 +82,7 @@ it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
 	adjust
 }
 
-
+# Helper function for non-parametric adjustements:
 int.eprior <- function(sdat, g.hat, d.hat){
     g.star <- d.star <- NULL
     r <- nrow(sdat)

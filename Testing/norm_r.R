@@ -14,6 +14,16 @@ write.csv(norm.nonparametric.adjusted, quote=FALSE, file="data/testdata_combat_n
 write.csv(norm.parametric.unadjusted, quote=FALSE, file="data/testdata_combat_parametric_unadjusted_r.csv", row.names=FALSE)
 write.csv(norm.nonparametric.unadjusted, quote=FALSE, file="data/testdata_combat_nonparametric_unadjusted_r.csv", row.names=FALSE)
 
+# No eb:
+norm.parametric.adjusted.noeb <- combat(data, batch=batch, mod=mod, parametric=TRUE, eb=FALSE)$dat.combat
+norm.nonparametric.adjusted.noeb <- combat(data, batch=batch, mod=mod, parametric=FALSE, eb=FALSE)$dat.combat
+norm.parametric.unadjusted.noeb <- combat(data, batch=batch, parametric=TRUE, eb=FALSE)$dat.combat
+norm.nonparametric.unadjusted.noeb <- combat(data, batch=batch, parametric=FALSE, eb=FALSE)$dat.combat
+write.csv(norm.parametric.adjusted.noeb, quote=FALSE, file="data/testdata_combat_parametric_adjusted_noeb_r.csv", row.names=FALSE)
+write.csv(norm.nonparametric.adjusted.noeb, quote=FALSE, file="data/testdata_combat_nonparametric_adjusted_noeb_r.csv", row.names=FALSE)
+write.csv(norm.parametric.unadjusted.noeb, quote=FALSE, file="data/testdata_combat_parametric_unadjusted_noeb_r.csv", row.names=FALSE)
+write.csv(norm.nonparametric.unadjusted.noeb, quote=FALSE, file="data/testdata_combat_nonparametric_unadjusted_noeb_r.csv", row.names=FALSE)
+
 #data[1:2,4] <- NA
 #data[3,6] <- NA
 #norm.parametric.adjustedd <- combat(data, batch=batch, mod=mod, parametric=TRUE)$dat.combat

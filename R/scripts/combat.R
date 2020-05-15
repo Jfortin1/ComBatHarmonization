@@ -5,23 +5,6 @@
 # If using this code, make sure you agree and accept this license. 
 # Code optimization improved by Richard Beare 
 
-# source("utils.R")
-# set.seed(10)
-# nrow <- 200
-# ncol <- 10
-# data <- matrix(rnorm(nrow*ncol), nrow, ncol)
-# data[,c(1,3,5,7,9)] <- data[,c(1,3,5,7,9)]+3
-# data[,6:10] <- (data[,6:10]+5)*1.5
-# batch = c(1,1,1,1,1,2,2,2,2,2)
-# pheno <- rep(0, ncol(data))
-# pheno[c(1,3,5,7,9)] <- 1
-# mod=model.matrix(~pheno)
-# dat=data
-# eb=TRUE
-# verbose=TRUE
-# parametric=TRUE
-
-
 combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE){
   dat <- as.matrix(dat)
   .checkConstantRows(dat)

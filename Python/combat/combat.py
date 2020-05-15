@@ -4,12 +4,15 @@ from __future__ import absolute_import, print_function
 import pandas as pd
 import numpy as np
 import numpy.linalg as la
+import math
 
 def combat(dat,
            covars,
            batch_col,
            categorical_cols=None,
-           continuous_cols=None):
+           continuous_cols=None,
+           eb=True,
+           parametric=True):
     """
     Run ComBat to remove scanner effects in multi-site imaging data
 
@@ -30,6 +33,12 @@ def combat(dat,
     continuous_cols : string or list of strings indicating continuous variables to adjust for
         - e.g. age
 
+    eb : should Empirical Bayes be performed?
+        - True by default
+
+    parametric : should parametric adjustements be performed?
+        - True by default
+        
     Returns
     -------
     - A numpy array with the same shape as `dat` which has now been ComBat-harmonized
@@ -95,8 +104,16 @@ def combat(dat,
     LS_dict = fit_LS_model_and_find_priors(s_data, design, info_dict)
 
     # find parametric adjustments
-    print('[ComBat] Finding parametric adjustments')
-    gamma_star, delta_star = find_parametric_adjustments(s_data, LS_dict, info_dict)
+    if eb:
+        if parametric:
+            print('[ComBat] Finding parametric adjustments')
+            gamma_star, delta_star = find_parametric_adjustments(s_data, LS_dict, info_dict)
+        else:
+            print('[ComBat] Finding non-parametric adjustments')
+            gamma_star, delta_star = find_non_parametric_adjustments(s_data, LS_dict, info_dict)
+    else:
+        print('[ComBat] Finding L/S adjustments without Empirical Bayes')
+        gamma_star, delta_star = find_non_eb_adjustments(s_data, LS_dict, info_dict)
 
     # adjust data
     print('[ComBat] Final adjustment of data')
@@ -205,6 +222,7 @@ def fit_LS_model_and_find_priors(s_data, design, info_dict):
     LS_dict['b_prior'] = b_prior
     return LS_dict
 
+#Helper function for parametric adjustements:
 def it_sol(sdat, g_hat, d_hat, g_bar, t2, a, b, conv=0.0001):
     n = (1 - np.isnan(sdat)).sum(axis=1)
     g_old = g_hat.copy()
@@ -224,6 +242,33 @@ def it_sol(sdat, g_hat, d_hat, g_bar, t2, a, b, conv=0.0001):
     adjust = (g_new, d_new)
     return adjust 
 
+
+
+#Helper function for non-parametric adjustements:
+def int_eprior(sdat, g_hat, d_hat):
+    r = sdat.shape[0]
+    gamma_star, delta_star = [], []
+    for i in range(0,r,1):
+        g = np.delete(g_hat,i)
+        d = np.delete(d_hat,i)
+        x = sdat[i,:]
+        n = x.shape[0]
+        j = np.repeat(1,n)
+        A = np.repeat(x, g.shape[0])
+        A = A.reshape(n,g.shape[0])
+        A = np.transpose(A)
+        B = np.repeat(g, n)
+        B = B.reshape(g.shape[0],n)
+        resid2 = np.square(A-B)
+        sum2 = resid2.dot(j)
+        LH = 1/(2*math.pi*d)**(n/2)*np.exp(-sum2/(2*d))
+        LH = np.nan_to_num(LH)
+        gamma_star.append(sum(g*LH)/sum(LH))
+        delta_star.append(sum(d*LH)/sum(LH))
+    adjust = (gamma_star, delta_star)
+    return adjust
+
+
 def find_parametric_adjustments(s_data, LS, info_dict):
     batch_info  = info_dict['batch_info'] 
 
@@ -237,6 +282,22 @@ def find_parametric_adjustments(s_data, LS, info_dict):
         delta_star.append(temp[1])
 
     return np.array(gamma_star), np.array(delta_star)
+
+def find_non_parametric_adjustments(s_data, LS, info_dict):
+    batch_info  = info_dict['batch_info'] 
+
+    gamma_star, delta_star = [], []
+    for i, batch_idxs in enumerate(batch_info):
+        temp = int_eprior(s_data[:,batch_idxs], LS['gamma_hat'][i],
+                    LS['delta_hat'][i])
+
+        gamma_star.append(temp[0])
+        delta_star.append(temp[1])
+
+    return np.array(gamma_star), np.array(delta_star)
+
+def find_non_eb_adjustments(s_data, LS, info_dict):
+    return LS['gamma_hat'], LS['delta_hat']
 
 def adjust_data_final(s_data, design, gamma_star, delta_star, stand_mean, var_pooled, info_dict):
     sample_per_batch = info_dict['sample_per_batch']
