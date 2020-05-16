@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 import setuptools
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+    
 setuptools.setup(
   author="Jean-Philippe Fortin, Nick Cullen",
   author_email='fortin946@gmail.com,',
