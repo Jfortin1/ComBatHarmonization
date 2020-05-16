@@ -82,6 +82,8 @@ it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
 	adjust
 }
 
+
+
 # Helper function for non-parametric adjustements:
 int.eprior <- function(sdat, g.hat, d.hat){
     g.star <- d.star <- NULL

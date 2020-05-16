@@ -1,3 +1,3 @@
 from __future__ import absolute_import
 
-from .combat import combat
+from .neuroCombat import neuroCombat

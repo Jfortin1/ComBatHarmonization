@@ -6,7 +6,7 @@ import numpy as np
 import numpy.linalg as la
 import math
 
-def combat(dat,
+def neuroCombat(dat,
            covars,
            batch_col,
            categorical_cols=None,
@@ -92,31 +92,31 @@ def combat(dat,
     }
 
     # create design matrix
-    print('[ComBat] Creating design matrix')
+    print('[neuroCombat] Creating design matrix')
     design = make_design_matrix(covars, batch_col, cat_cols, num_cols)
     
     # standardize data across features
-    print('[ComBat] Standardizing data across features')
+    print('[neuroCombat] Standardizing data across features')
     s_data, s_mean, v_pool = standardize_across_features(dat, design, info_dict)
     
     # fit L/S models and find priors
-    print('[ComBat] Fitting L/S model and finding priors')
+    print('[neuroCombat] Fitting L/S model and finding priors')
     LS_dict = fit_LS_model_and_find_priors(s_data, design, info_dict)
 
     # find parametric adjustments
     if eb:
         if parametric:
-            print('[ComBat] Finding parametric adjustments')
+            print('[neuroCombat] Finding parametric adjustments')
             gamma_star, delta_star = find_parametric_adjustments(s_data, LS_dict, info_dict)
         else:
-            print('[ComBat] Finding non-parametric adjustments')
+            print('[neuroCombat] Finding non-parametric adjustments')
             gamma_star, delta_star = find_non_parametric_adjustments(s_data, LS_dict, info_dict)
     else:
-        print('[ComBat] Finding L/S adjustments without Empirical Bayes')
+        print('[neuroCombat] Finding L/S adjustments without Empirical Bayes')
         gamma_star, delta_star = find_non_eb_adjustments(s_data, LS_dict, info_dict)
 
     # adjust data
-    print('[ComBat] Final adjustment of data')
+    print('[neuroCombat] Final adjustment of data')
     bayes_data = adjust_data_final(s_data, design, gamma_star, delta_star, 
                                                 s_mean, v_pool, info_dict)
 
