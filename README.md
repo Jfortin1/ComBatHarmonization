@@ -50,7 +50,7 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 
 <div id='id-section2'/>
 
-## 3. Problem of missing values in R(NA and NaN)
+## 3. Problem of missing values (NAs and NaNs)
 
 ### R
 
@@ -75,4 +75,7 @@ The `Testing` directory contains code for comparing and testing the outputs from
 
 03-06-2020: ComBat in R now accepts missing values
 
+05-14-2020: We migrated our official Python implementation (neuroCombat) here for maintainability. 
+
+05-15-2020: Non-parametric adjustements, and ```eb=False``` now implemented in Python
 
