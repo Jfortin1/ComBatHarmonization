@@ -1,0 +1,3 @@
+[submodule "Python/neuroCombat"]
+	path = Python/neuroCombat
+	url = https://github.com/Jfortin1/neuroCombat
