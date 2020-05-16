@@ -48,6 +48,14 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 - [Matlab implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
 - [Python implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (neuroCombat)
 
+|                | R | Matlab | Python |
+|----------------|---|--------|--------|
+| Parametric ComBat     | x | x      | x      |
+| Non-parametric ComBat | x | x      | x      |
+| Optional EB    | x |        | x      |
+| Can handle missing values | x |        |        |
+
+
 <div id='id-section2'/>
 
 ## 3. Problem of missing values (NAs and NaNs)
