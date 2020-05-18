@@ -71,6 +71,9 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 - Make sure that your input data matrix to ComBat only includes finite values (no NA or NaN).
 - Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values
 
+### Python
+
+- To be tested. 
 
 ## 4. Testing
 
