@@ -41,31 +41,41 @@ The ComBat algorithm also accepts an optional input:
 
 ## 2. Software
 
-The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (previously named neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license, which is compatible with the Artistic License 2.0 of `sva`. 
+The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license, which is compatible with the Artistic License 2.0 of `sva`. 
 
 **Tutorials, instructions and examples for using ComBat:**
 - [R implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
 - [Matlab implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
-- [Python implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (previously neuroCombat)
+- [Python implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (neuroCombat)
+
+|                | R | Matlab | Python |
+|----------------|---|--------|--------|
+| Parametric ComBat     | x | x      | x      |
+| Non-parametric ComBat | x | x      | x      |
+| Optional EB    | x |        | x      |
+| Can handle missing values | x |        |        |
+
 
 <div id='id-section2'/>
 
-## 3. Problem of missing values in R(NA and NaN)
+## 3. Problem of missing values (NAs and NaNs)
+
+### R
 
 - The data can now include missing values. 
 - Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values.
 
-## 5. Problem of missing values in Matlab (NA and NaN)
+### Matlab
 
 - Make sure that your input data matrix to ComBat only includes finite values (no NA or NaN).
 - Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values
 
 
-## 5. Testing
+## 4. Testing
 
-The `Testing` directory contains code for comparing and testing the outputs from R and Matlab. 
+The `Testing` directory contains code for comparing and testing the outputs from R, Matlab and Python. 
 
-## 6. News
+## 5. News
 
 05-19-2019: Added the option of running the non-parametric version of ComBat in the Matlab implementation. 
 
@@ -73,4 +83,7 @@ The `Testing` directory contains code for comparing and testing the outputs from
 
 03-06-2020: ComBat in R now accepts missing values
 
+05-14-2020: We migrated our official Python implementation (neuroCombat) here for maintainability. 
+
+05-15-2020: Non-parametric adjustements, and ```eb=False``` now implemented in Python
 
