@@ -78,13 +78,23 @@ The `Testing` directory contains code for comparing and testing the outputs from
 
 ## 5. News
 
-05-19-2019: Added the option of running the non-parametric version of ComBat in the Matlab implementation. 
+05-17-2020: Mean adjustement only option (```mean.only```) now implemented in both Python and R.
 
-05-19-2019: Added the option of running the non-parametric version of ComBat in the R implementation. 
-
-03-06-2020: ComBat in R now accepts missing values
+05-15-2020: Non-parametric adjustements, and ```eb=False``` now implemented in both Python and R.
 
 05-14-2020: We migrated our official Python implementation (neuroCombat) here for maintainability. 
 
-05-15-2020: Non-parametric adjustements, and ```eb=False``` now implemented in Python
+03-06-2020: ComBat in R now accepts missing values.
+
+05-19-2019: Added the option of running the non-parametric version of ComBat in the R implementation. 
+
+05-19-2019: Added the option of running the non-parametric version of ComBat in the Matlab implementation. 
+
+
+
+
+
+
+
+
 
