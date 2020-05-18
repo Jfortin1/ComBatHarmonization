@@ -5,11 +5,21 @@
 # If using this code, make sure you agree and accept this license. 
 # Code optimization improved by Richard Beare 
 
-combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE){
+combat <- function(dat, 
+  batch, 
+  mod=NULL, 
+  eb=TRUE, 
+  parametric=TRUE,
+  mean.only=FALSE,
+  verbose=TRUE
+){
   dat <- as.matrix(dat)
   .checkConstantRows(dat)
   .checkNARows(dat)
 
+  if(mean.only){
+      if (verbose) cat("[combat] Performing ComBat with mean only\n")
+  }
   if (eb){
       if (verbose) cat("[combat] Performing ComBat with empirical Bayes\n")
   } else {
@@ -24,6 +34,9 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
   n.batch <- nlevels(batch)
   batches <- lapply(levels(batch), function(x)which(batch==x))
   n.batches <- sapply(batches, length)
+  if(any(n.batches==1) & mean.only==FALSE){
+      stop("Found one site with only one sample. Consider using the mean.only=TRUE option")
+  }
   n.array <- sum(n.batches)
   #combine batch variable and covariates
   design <- cbind(batchmod,mod)
@@ -102,8 +115,16 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
   
   delta.hat <- NULL
   for (i in batches){
-    delta.hat <- rbind(delta.hat,rowVars(s.data, cols=i, na.rm=TRUE))
+    if (mean.only){
+      delta.hat <- rbind(delta.hat,rep(1,nrow(s.data))) 
+    } else {
+      delta.hat <- rbind(delta.hat,rowVars(s.data, cols=i, na.rm=TRUE))
+    }
+    
   }
+
+
+
 
   # Empirical Bayes correction:
   gamma.star <- delta.star <- NULL
@@ -121,20 +142,29 @@ combat <- function(dat, batch, mod=NULL, eb=TRUE, verbose=TRUE, parametric=TRUE)
       if (parametric){
         if (verbose) cat("[combat] Finding parametric adjustments\n")
         for (i in 1:n.batch){
-            temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
-            gamma.star <- rbind(gamma.star,temp[1,])
-            delta.star <- rbind(delta.star,temp[2,])
+            if (mean.only){
+              gamma.star <- rbind(gamma.star,postmean(gamma.hat[i,], gamma.bar[i], 1, 1, t2[i]))
+              delta.star <- rbind(delta.star,rep(1, nrow(s.data)))
+            } else {
+              temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
+              gamma.star <- rbind(gamma.star,temp[1,])
+              delta.star <- rbind(delta.star,temp[2,])
+            }
         }
       } else {
         if (verbose) cat("[combat] Finding non-parametric adjustments\n")
         for (i in 1:n.batch){
+            if (mean.only){
+                delta.hat[i, ] = 1
+            }
             temp <- int.eprior(as.matrix(s.data[, batches[[i]]]),gamma.hat[i,], delta.hat[i,])
             gamma.star <- rbind(gamma.star,temp[1,])
             delta.star <- rbind(delta.star,temp[2,])
         }
       }
-      
   } 
+
+
 
   ### Normalize the Data ###
   if (verbose) cat("[combat] Adjusting the Data\n")
