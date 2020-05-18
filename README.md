@@ -17,8 +17,10 @@
 
 ## Table of content
 - [1. Introduction](#id-section1)
-- [2. Software](#id-section2)
-- [3. Testing](#id-section3)
+- [2. Software implementations](#id-section2)
+- [3. Missing values](#id-section3)
+- [4. FAQs](#id-section3)
+- [5. News](#id-section3)
 
 <div id='id-section1'/>
 
@@ -26,9 +28,9 @@
 
 Imaging data suffer from technical between-scanner variation that hinders comparisons of images across imaging sites, scanners and over time. This includes common imaging modalities, such as MRI, fMRI and DTI, as well as measurements derived from those modalities, for instance ROI volumes, RAVENS maps, cortical thickness measurements, connectome matrices, etc. To maximize statistical power, post-processing data harmonization is a powerful technique to remove unwanted variation when combining data across scanners and sites. 
 
-In two recent papers ([harmonization of DTI data](https://www.sciencedirect.com/science/article/pii/S1053811917306948?via%3Dihub#!) and [harmonization of cortical thickness measurements](https://www.sciencedirect.com/science/article/pii/S105381191730931X)) we have shown that [ComBat](https://academic.oup.com/biostatistics/article/8/1/118/252073/Adjusting-batch-effects-in-microarray-expression), a popular batch-effect correction tool used in genomics, succesffuly removes inter-site technical variability while preserving inter-site biological variability. We showed that ComBat performs well for multi-site imaging studies that only have a few participants per site. We also showed that ComBat was robust to unbalanced studies, that is studies for which the biological covariate of interest is not balanced across sites. 
+In two recent papers ([harmonization of DTI data](https://www.sciencedirect.com/science/article/pii/S1053811917306948?via%3Dihub#!) and [harmonization of cortical thickness measurements](https://www.sciencedirect.com/science/article/pii/S105381191730931X)) we have shown that [ComBat](https://academic.oup.com/biostatistics/article/8/1/118/252073/Adjusting-batch-effects-in-microarray-expression), a popular batch-effect correction tool used in genomics, succesffuly removes inter-site technical variability while preserving inter-site biological variability. We showed that ComBat performs well for multi-site imaging studies that only have a few participants per site. We also showed that ComBat was robust to unbalanced studies, in which the biological covariate of interest is not balanced across sites. 
 
-We recommend to use the ComBat harmonization method after imaging processing, just right before the statistical analysis. The ComBat harmonization requires the imaging data to be represented in a matrix where rows are the imaging features (for instance voxels, ROIs or connectome edges) and columns are the participants. For example, for voxel-level analyses, this usually requires the images to be registered to a common template space. 
+We recommend to use the ComBat harmonization method after imaging processing before downstream statistical analyses. The ComBat harmonization requires the imaging data to be represented in a matrix where rows are the imaging features (for instance voxels, ROIs or connectome edges) and columns are the participants. For example, for voxel-level analyses, this usually requires images to be registered to a common template space. 
 
 ### Input and parameters
 
@@ -45,14 +47,17 @@ There are several alternative modes of running ComBat:
 
 <div id='id-section2'/>
 
-## 2. Software
+## 2. Software implementations
 
 The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license, which is compatible with the Artistic License 2.0 of `sva`. 
 
-**Tutorials, instructions and examples for using ComBat:**
+### Tutorials, instructions and examples for using ComBa
+
 - [R implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
 - [Matlab implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
 - [Python implementation](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (neuroCombat)
+
+### Current implemented features
 
 |                | R | Matlab | Python |
 |----------------|---|--------|--------|
@@ -63,27 +68,26 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 | Can handle missing values | x |        |        |
 
 
-<div id='id-section2'/>
 
-## 3. Problem of missing values (NAs and NaNs)
 
-### R
 
-- The data can now include missing values. 
-- Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values.
+### Testing and comparing the different implementations
 
-### Matlab
+The `Testing` directory contains code for testing and comparing the outputs from the R, Matlab and Python implementations. We routinely perform the analyses to make sure that all versions and implementations agree with each other, as well as with the ```sva``` implementation of ComBat, for all modes of running ComBat (parametric/non-parametric/eb/mean.only).  
 
-- Make sure that your input data matrix to ComBat only includes finite values (no NA or NaN).
-- Make sure to remove constant rows and rows with missing values only (for instance features that are 0 for all scans); not removing these rows will cause an error in ComBat or return NaN values
+<div id='id-section3'/>
 
-### Python
+## 3. Handling of missing values
 
-- To be tested. 
+- For R, the current implementation accepts missing values. Constant rows, and rows with missing values only, need to be removed before running ComBat. Not removing such rows will results in an error, or a matrix of NaN values. 
 
-## 4. Testing
+- For Matlab and Python, the input data can only contain finite values (no NA or Nan). Constant rows, and rows with missing values only, need to be removed before running ComBat. Not removing such rows will results in an error, or a matrix of NaN values. 
 
-The `Testing` directory contains code for comparing and testing the outputs from R, Matlab and Python. 
+<div id='id-section4'/>
+
+## 4. FAQs
+
+<div id='id-section5'/>
 
 ## 5. News
 
