@@ -53,6 +53,7 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 | Parametric ComBat     | x | x      | x      |
 | Non-parametric ComBat | x | x      | x      |
 | Optional EB    | x |        | x      |
+| Mean adjustment only | x |        |x        |
 | Can handle missing values | x |        |        |
 
 
