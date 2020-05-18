@@ -30,12 +30,18 @@ In two recent papers ([harmonization of DTI data](https://www.sciencedirect.com/
 
 We recommend to use the ComBat harmonization method after imaging processing, just right before the statistical analysis. The ComBat harmonization requires the imaging data to be represented in a matrix where rows are the imaging features (for instance voxels, ROIs or connectome edges) and columns are the participants. For example, for voxel-level analyses, this usually requires the images to be registered to a common template space. 
 
-The ComBat algorithm needs two mandatory inputs:
-- ***The data matrix***. Rows are features and columns are participants. 
-- ***The site, study or scanner variable***. The algorithm can only handle one variable. You should provide the smallest unit of the study that you believe introduces unwanted variable. For instance, for a study with 2 sites and 3 scanners (1 site with 1 scanner, 1 site with 2 scanners), the variable for scanner should be used. 
+### Input and parameters
 
-The ComBat algorithm also accepts an optional input:
-- ***Biological variables***. You can provide biological covariates, such as disease status, age, gender, to ensure that the harmonization technique does not remove the effects of those variables on the imaging data. The algorithm will take the variability associated with those variables in the estimation of the site/scanner effects. 
+Data inputs for ComBat are:
+- ***A data matrix***. The data to harmonize. Rows are features (for instance voxels or brain regions) and columns are participants. 
+- ***A batch id vector***. A vector (length should be equal to the number of columns in the data matrix) that specifies the id for the batch, site, or scanner to correct for. ComBat only accepts one batch vector. You should provide the smallest unit of the study that you believe introduces unwanted variation. For instance, for a study with 2 sites and 3 scanners (1 site with 1 scanner, 1 site with 2 scanners), the id for scanner should be used. 
+- ***Biological variables***. Optional design matrix specifying biological covariates that should be protected for during the removal of scanner/site effects, such as disease status, age, gender, etc. 
+
+There are several alternative modes of running ComBat:
+- ```parametric=FALSE```: will instead use a non-parametric prior method in the empirical Bayes procedure (default uses parametric priors).
+- ```eb=FALSE```: will not run the empirical Bayes procedure, and therefore location and scale parameters are not shrinked towards common factors averaged across features. This is equivalent to running a location-and-scale correction method for each feature separately. This is particularly useful for debugging and method development. 
+- ```mean.only=TRUE```: will only adjust the mean of the site effects across sites (default adjusts for mean and variance). This option is recommended for studies where the variances are expected to be different across sites due to the biology. 
+
 
 <div id='id-section2'/>
 
