@@ -9,7 +9,7 @@
 
 ## 1. Installation
  
-To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into an R session.
+To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into a fresh R session. 
 
 <div id='id-section2'/>
 
@@ -53,7 +53,7 @@ The ComBat algorithm also accepts an optional argument, `mod`, which is a matrix
 age <- c(82,70,68,66,80,69,72,76,74,80) # Continuous variable
 disease <- as.factor(c(1,2,1,2,1,2,1,2,1,2)) # Categorical variable
 ```
-we ceate a model matrix for these two biological covariates using the `model.matrix` function:
+we first create a model matrix for these two biological covariates using the `model.matrix` function:
 ```r
 mod <- model.matrix(~age+disease)
 mod
@@ -83,11 +83,16 @@ Sometimes, it is preferable not to pool information across features, for instanc
 - (2) The prior distributions used in ComBat do not fit well the data
 - (3) The site effects are only present for a small subset of features
 
-An example of (2) is when the site/scanner effects are highly heteregenous across features, for instance differential scanner effects between white matter (WM) or grey matter (GM) voxels exist. To run the ComBat model without empirical Bayes, which boils down to fitting a location/shift (L/S) model for each feature separately, the option `eb=FALSE` can be used:
+An example of (2) is studies with site/scanner effects that are highly heteregenous across features, for instance differential scanner effects between white matter (WM) or grey matter (GM) voxels exist. To run the ComBat model without empirical Bayes, which boils down to fitting a location/shift (L/S) model for each feature separately, the option `eb=FALSE` can be used:
 
 ```r
 data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
 ```
+
+
+### 2.3 ComBat with mean site effects adjustment only (no variance adjustment) 
+
+
 
 <div id='id-section3'/>
 
