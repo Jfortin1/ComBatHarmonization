@@ -25,6 +25,101 @@ library(matrixStats)
 }
 
 
+getBatchDict <- function(batch, design){
+    out <- list()
+    batch <- as.factor(batch)
+    n.batch <- nlevels(batch)
+    batches <- lapply(levels(batch), function(x)which(batch==x))
+    n.batches <- sapply(batches, length)
+    n.array <- sum(n.batches)
+    out[["batch"]] <- batch
+    out[["batches"]] <- batches
+    out[["n.batches"]] <- n.batches
+    out[["n.array"]] <- n.array
+    out[["n.batch"]] <- n.batch
+    out[["batch.design"]] <- design[,1:n.batch]
+    return(out)
+}
+
+
+.checkDesign <- function(design, n.batch){
+  # Check if the design is confounded
+  if(qr(design)$rank<ncol(design)){
+    if(ncol(design)==(n.batch+1)){
+      stop("[combat] The covariate is confounded with batch. Remove the covariate and rerun ComBat.")
+    }
+    if(ncol(design)>(n.batch+1)){
+      if((qr(design[,-c(1:n.batch)])$rank<ncol(design[,-c(1:n.batch)]))){
+        stop('The covariates are confounded. Please remove one or more of the covariates so the design is not confounded.')
+      } else {
+        stop("At least one covariate is confounded with batch. Please remove confounded covariates and rerun ComBat.")
+      }
+    }
+  }
+  design
+}
+
+
+getDesignMatrix <- function(batch, mod, verbose, mean.only){
+    batch <- as.factor(batch)
+    batchmod <- model.matrix(~-1+batch)  
+    n.batch <- nlevels(batch)
+    batches <- lapply(levels(batch), function(x)which(batch==x))
+    n.batches <- sapply(batches, length)
+    n.array <- sum(n.batches)
+    if (verbose) cat("[combat] Found",nlevels(batch),'batches\n')
+    if(any(n.batches==1) & mean.only==FALSE){
+      stop("Found one site with only one sample. Consider using the mean.only=TRUE option")
+    }
+    #combine batch variable and covariates
+    design <- cbind(batchmod,mod)
+    # check for intercept in covariates, and drop if present
+    check  <- apply(design, 2, function(x) all(x == 1))
+    design <- as.matrix(design[,!check])
+    design <- .checkDesign(design, n.batch)
+    ncovariates <- ncol(design)-ncol(batchmod)
+    if (verbose) cat("[combat] Adjusting for ",ncovariates,' covariate(s) or covariate level(s)\n')
+    return(design)
+}
+
+
+  
+getStandardizedData <- function(dat, batchDict, design, hasNAs){
+    n.batches=batchDict$n.batches
+    n.array=batchDict$n.array
+    n.batch=batchDict$n.batch
+    .getBetaHat <- function(dat, design, hasNAs){
+        if (!hasNAs){
+          B.hat <- solve(crossprod(design))
+          B.hat <- tcrossprod(B.hat, design)
+          B.hat <- tcrossprod(B.hat, dat)
+        } else {
+          B.hat <- apply(dat, 1, .betaNA, design)
+        }
+    }
+    B.hat <- .getBetaHat(dat=dat, design=design, hasNAs=hasNAs)
+    grand.mean <- crossprod(n.batches/n.array, B.hat[1:n.batch,])
+    stand.mean <- crossprod(grand.mean, t(rep(1,n.array)))
+    if (!hasNAs){
+      factors <- (n.array/(n.array-1))
+      var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+    } else {
+      ns <- rowSums(!is.na(dat))
+      factors <- (ns/(ns-1))
+      var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+    }
+
+    if(!is.null(design)){
+      tmp <- design
+      tmp[,c(1:n.batch)] <- 0
+      stand.mean <- stand.mean+t(tmp%*%B.hat)
+    } 
+    s.data <- (dat-stand.mean)/(tcrossprod(sqrt(var.pooled), rep(1,n.array)))
+    return(list(s.data=s.data, 
+      stand.mean=stand.mean, var.pooled=var.pooled)
+    )
+}
+
 # Following four find empirical hyper-prior values
 aprior <- function(gamma.hat){
 	m=mean(gamma.hat)
@@ -107,6 +202,126 @@ int.eprior <- function(sdat, g.hat, d.hat){
     rownames(adjust) <- c("g.star","d.star")
     adjust	
 } 
+
+
+getNaiveEstimators <- function(s.data, batchDict, hasNAs, mean.only){
+    batch.design <- batchDict$batch.design
+    batches <- batchDict$batches
+    if (!hasNAs){
+        gamma.hat <- tcrossprod(solve(crossprod(batch.design, batch.design)), batch.design)
+        gamma.hat <- tcrossprod(gamma.hat, s.data)
+    } else{
+        gamma.hat <- apply(s.data, 1, .betaNA, batch.design) 
+    }
+    delta.hat <- NULL
+    for (i in batchDict$batches){
+      if (mean.only){
+        delta.hat <- rbind(delta.hat,rep(1,nrow(s.data))) 
+      } else {
+        delta.hat <- rbind(delta.hat,rowVars(s.data, cols=i, na.rm=TRUE))
+      }    
+    }
+    return(list(gamma.hat=gamma.hat, delta.hat=delta.hat))
+}
+
+
+getEbEstimators <- function(naiveEstimators,
+      s.data, batchDict,
+      parametric=TRUE, 
+      mean.only=FALSE
+){
+      gamma.hat=naiveEstimators[["gamma.hat"]]
+      delta.hat=naiveEstimators[["delta.hat"]]
+      batches=batchDict$batches
+      n.batch=batchDict$n.batch
+      .getParametricEstimators <- function(){
+            gamma.star <- delta.star <- NULL
+            for (i in 1:n.batch){
+                if (mean.only){
+                  gamma.star <- rbind(gamma.star,postmean(gamma.hat[i,], gamma.bar[i], 1, 1, t2[i]))
+                  delta.star <- rbind(delta.star,rep(1, nrow(s.data)))
+                } else {
+                  temp <- it.sol(s.data[,batches[[i]]],gamma.hat[i,],delta.hat[i,],gamma.bar[i],t2[i],a.prior[i],b.prior[i])
+                  gamma.star <- rbind(gamma.star,temp[1,])
+                  delta.star <- rbind(delta.star,temp[2,])
+                }
+            }
+            return(list(gamma.star=gamma.star, delta.star=delta.star))
+      }
+      .getNonParametricEstimators <- function(){
+          gamma.star <- delta.star <- NULL
+          for (i in 1:n.batch){
+              if (mean.only){
+                  delta.hat[i, ] = 1
+              }
+              temp <- int.eprior(as.matrix(s.data[, batches[[i]]]),gamma.hat[i,], delta.hat[i,])
+              gamma.star <- rbind(gamma.star,temp[1,])
+              delta.star <- rbind(delta.star,temp[2,])
+          }
+          return(list(gamma.star=gamma.star, delta.star=delta.star))
+      }
+      gamma.bar <- rowMeans(gamma.hat, na.rm=TRUE)
+      t2 <- rowVars(gamma.hat, na.rm=TRUE)
+      a.prior <- apriorMat(delta.hat)
+      b.prior <- bpriorMat(delta.hat)
+      if (parametric){
+        temp <- .getParametricEstimators()
+      } else {
+        temp <- .getNonParametricEstimators()
+      }
+      out <- list()
+      out[["gamma.star"]] <- temp[["gamma.star"]]
+      out[["delta.star"]] <- temp[["delta.star"]]
+      out[["gamma.bar"]] <- gamma.bar
+      out[["t2"]] <- t2
+      out[["a.prior"]] <- a.prior
+      out[["b.prior"]] <- b.prior
+      return(out)
+}
+
+
+getNonEbEstimators <- function(naiveEstimators){
+  out <- list()
+  out[["gamma.star"]] <- naiveEstimators[["gamma.hat"]]
+  out[["delta.star"]] <- naiveEstimators[["delta.hat"]]
+  out[["gamma.bar"]]  <- NULL
+  out[["t2"]] <- NULL
+  out[["a.prior"]] <- NULL
+  out[["b.prior"]] <- NULL
+  return(out)
+}
+
+
+getCorrectedData <- function(s.data, batchDict, 
+  estimators, naiveEstimators,
+  stdObjects,
+  eb=TRUE){
+  var.pooled=stdObjects$var.pooled
+  stand.mean=stdObjects$stand.mean
+  batches <- batchDict$batches
+  batch.design <- batchDict$batch.design
+  n.batches <- batchDict$n.batches
+  n.array <- batchDict$n.array
+  if (eb){
+    gamma.star <- estimators[["gamma.star"]]
+    delta.star <- estimators[["delta.star"]]
+  } else {
+    gamma.star <- naiveEstimators[["gamma.hat"]]
+    delta.star <- naiveEstimators[["delta.hat"]]
+  }
+  bayesdata <- s.data
+  j <- 1
+  for (i in batches){
+      top <- bayesdata[,i]-t(batch.design[i,]%*%gamma.star)
+      bottom <- tcrossprod(sqrt(delta.star[j,]), rep(1,n.batches[j]))
+      bayesdata[,i] <- top/bottom
+      j <- j+1
+  }
+  bayesdata <- (bayesdata*(tcrossprod(sqrt(var.pooled), rep(1,n.array))))+stand.mean
+  return(bayesdata)
+}
+
+
 
 
 
