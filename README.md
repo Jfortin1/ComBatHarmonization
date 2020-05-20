@@ -59,14 +59,13 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 
 |                | R | Matlab | Python |
 |----------------|---|--------|--------|
-| Parametric ComBat     | x | x      | x      |
-| Non-parametric ComBat | x | x      | x      |
-| Optional EB    | x |        | x      |
+| Parametric adjustments     | x | x      | x      |
+| Non-parametric adjustments | x | x      | x      |
+| Empirical Bayes   | x |        | x      |
+| No empirical Bayes   | x |        | x      |
 | Mean adjustment only | x |        |x        |
+| Reference batch | x |        |        |
 | Can handle missing values | x |        |        |
-
-
-
 
 
 ### Testing and comparing the different implementations
