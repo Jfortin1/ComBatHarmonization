@@ -25,22 +25,6 @@ library(matrixStats)
 }
 
 
-getBatchDict <- function(batch, design){
-    out <- list()
-    batch <- as.factor(batch)
-    n.batch <- nlevels(batch)
-    batches <- lapply(levels(batch), function(x)which(batch==x))
-    n.batches <- sapply(batches, length)
-    n.array <- sum(n.batches)
-    out[["batch"]] <- batch
-    out[["batches"]] <- batches
-    out[["n.batches"]] <- n.batches
-    out[["n.array"]] <- n.array
-    out[["n.batch"]] <- n.batch
-    out[["batch.design"]] <- design[,1:n.batch]
-    return(out)
-}
-
 
 .checkDesign <- function(design, n.batch){
   # Check if the design is confounded
@@ -60,34 +44,67 @@ getBatchDict <- function(batch, design){
 }
 
 
-getDesignMatrix <- function(batch, mod, verbose, mean.only){
+getDataDict <- function(batch, mod, verbose, mean.only, ref.batch=NULL){
     batch <- as.factor(batch)
-    batchmod <- model.matrix(~-1+batch)  
     n.batch <- nlevels(batch)
     batches <- lapply(levels(batch), function(x)which(batch==x))
     n.batches <- sapply(batches, length)
     n.array <- sum(n.batches)
+    batchmod <- model.matrix(~-1+batch)  
     if (verbose) cat("[combat] Found",nlevels(batch),'batches\n')
     if(any(n.batches==1) & mean.only==FALSE){
       stop("Found one site with only one sample. Consider using the mean.only=TRUE option")
+    }
+    if (!is.null(ref.batch)){
+        if (!(ref.batch%in%levels(batch))) {
+            stop("reference level ref.batch is not found in batch")
+        }
+        if (verbose){
+          cat(paste0("[combat] Using batch=",ref.batch, " as a reference batch \n"))
+        }
+        ref <- which(levels(as.factor(batch))==ref.batch) # find the reference
+        batchmod[,ref] <- 1
+    } else {
+        ref <- NULL
     }
     #combine batch variable and covariates
     design <- cbind(batchmod,mod)
     # check for intercept in covariates, and drop if present
     check  <- apply(design, 2, function(x) all(x == 1))
+    if(!is.null(ref)){
+        check[ref] <- FALSE
+    }
     design <- as.matrix(design[,!check])
     design <- .checkDesign(design, n.batch)
-    ncovariates <- ncol(design)-ncol(batchmod)
-    if (verbose) cat("[combat] Adjusting for ",ncovariates,' covariate(s) or covariate level(s)\n')
-    return(design)
+    n.covariates <- ncol(design)-ncol(batchmod)
+    if (verbose) cat("[combat] Adjusting for ",n.covariates,' covariate(s) or covariate level(s)\n')
+      out <- list()
+    out[["batch"]] <- batch
+    out[["batches"]] <- batches
+    out[["n.batch"]] <- n.batch
+    out[["n.batches"]] <- n.batches
+    out[["n.array"]] <- n.array
+    out[["n.covariates"]] <- n.covariates
+    out[["design"]] <- design
+    out[["batch.design"]] <- design[,1:n.batch]
+    out[["ref"]] <- ref
+    out[["ref.batch"]] <- ref.batch
+    return(out)
 }
 
 
+
+
+
+
   
-getStandardizedData <- function(dat, batchDict, design, hasNAs){
-    n.batches=batchDict$n.batches
-    n.array=batchDict$n.array
-    n.batch=batchDict$n.batch
+getStandardizedData <- function(dat, dataDict, design, hasNAs){
+    batches=dataDict$batches
+    n.batches=dataDict$n.batches
+    n.array=dataDict$n.array
+    n.batch=dataDict$n.batch
+    ref.batch=dataDict$ref.batch
+    ref=dataDict$ref
     .getBetaHat <- function(dat, design, hasNAs){
         if (!hasNAs){
           B.hat <- solve(crossprod(design))
@@ -98,15 +115,32 @@ getStandardizedData <- function(dat, batchDict, design, hasNAs){
         }
     }
     B.hat <- .getBetaHat(dat=dat, design=design, hasNAs=hasNAs)
-    grand.mean <- crossprod(n.batches/n.array, B.hat[1:n.batch,])
+    if(!is.null(ref.batch)){
+        grand.mean <- t(B.hat[ref, ])
+    } else {
+        grand.mean <- crossprod(n.batches/n.array, B.hat[1:n.batch,])
+    }
     stand.mean <- crossprod(grand.mean, t(rep(1,n.array)))
     if (!hasNAs){
-      factors <- (n.array/(n.array-1))
-      var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+      if (!is.null(ref.batch)){
+          ref.dat <- dat[, batches[[ref]]]
+          factors <- (n.batches[ref]/(n.batches[ref]-1))
+          var.pooled <- rowVars(ref.dat-t(design[batches[[ref]], ]%*%B.hat), na.rm=TRUE)/factors
+      } else {
+          factors <- (n.array/(n.array-1))
+          var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+      }
     } else {
-      ns <- rowSums(!is.na(dat))
-      factors <- (ns/(ns-1))
-      var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+      if (!is.null(ref.batch)){
+          ref.dat <- dat[, batches[[ref]]]  
+          ns <- rowSums(!is.na(ref.dat))
+          factors <- (ns/(ns-1))
+          var.pooled <- rowVars(ref.dat-t(design[batches[[ref]], ]%*%B.hat), na.rm=TRUE)/factors
+      } else {
+          ns <- rowSums(!is.na(dat))
+          factors <- (ns/(ns-1))
+          var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
+      }
     }
 
     if(!is.null(design)){
@@ -116,7 +150,8 @@ getStandardizedData <- function(dat, batchDict, design, hasNAs){
     } 
     s.data <- (dat-stand.mean)/(tcrossprod(sqrt(var.pooled), rep(1,n.array)))
     return(list(s.data=s.data, 
-      stand.mean=stand.mean, var.pooled=var.pooled)
+        stand.mean=stand.mean, 
+        var.pooled=var.pooled)
     )
 }
 
@@ -204,9 +239,9 @@ int.eprior <- function(sdat, g.hat, d.hat){
 } 
 
 
-getNaiveEstimators <- function(s.data, batchDict, hasNAs, mean.only){
-    batch.design <- batchDict$batch.design
-    batches <- batchDict$batches
+getNaiveEstimators <- function(s.data, dataDict, hasNAs, mean.only){
+    batch.design <- dataDict$batch.design
+    batches <- dataDict$batches
     if (!hasNAs){
         gamma.hat <- tcrossprod(solve(crossprod(batch.design, batch.design)), batch.design)
         gamma.hat <- tcrossprod(gamma.hat, s.data)
@@ -214,7 +249,7 @@ getNaiveEstimators <- function(s.data, batchDict, hasNAs, mean.only){
         gamma.hat <- apply(s.data, 1, .betaNA, batch.design) 
     }
     delta.hat <- NULL
-    for (i in batchDict$batches){
+    for (i in dataDict$batches){
       if (mean.only){
         delta.hat <- rbind(delta.hat,rep(1,nrow(s.data))) 
       } else {
@@ -226,14 +261,16 @@ getNaiveEstimators <- function(s.data, batchDict, hasNAs, mean.only){
 
 
 getEbEstimators <- function(naiveEstimators,
-      s.data, batchDict,
+      s.data, dataDict,
       parametric=TRUE, 
       mean.only=FALSE
 ){
       gamma.hat=naiveEstimators[["gamma.hat"]]
       delta.hat=naiveEstimators[["delta.hat"]]
-      batches=batchDict$batches
-      n.batch=batchDict$n.batch
+      batches=dataDict$batches
+      n.batch=dataDict$n.batch
+      ref.batch=dataDict$ref.batch
+      ref=dataDict$ref
       .getParametricEstimators <- function(){
             gamma.star <- delta.star <- NULL
             for (i in 1:n.batch){
@@ -269,6 +306,10 @@ getEbEstimators <- function(naiveEstimators,
       } else {
         temp <- .getNonParametricEstimators()
       }
+      if(!is.null(ref.batch)){
+        temp[["gamma.star"]][ref,] <- 0  ## set reference batch mean equal to 0
+        temp[["delta.star"]][ref,] <- 1  ## set reference batch variance equal to 1
+      }
       out <- list()
       out[["gamma.star"]] <- temp[["gamma.star"]]
       out[["delta.star"]] <- temp[["delta.star"]]
@@ -280,7 +321,7 @@ getEbEstimators <- function(naiveEstimators,
 }
 
 
-getNonEbEstimators <- function(naiveEstimators){
+getNonEbEstimators <- function(naiveEstimators,dataDict){
   out <- list()
   out[["gamma.star"]] <- naiveEstimators[["gamma.hat"]]
   out[["delta.star"]] <- naiveEstimators[["delta.hat"]]
@@ -288,20 +329,31 @@ getNonEbEstimators <- function(naiveEstimators){
   out[["t2"]] <- NULL
   out[["a.prior"]] <- NULL
   out[["b.prior"]] <- NULL
+  ref.batch=dataDict$ref.batch
+  ref=dataDict$ref
+  if(!is.null(ref.batch)){
+    out[["gamma.star"]][ref,] <- 0  ## set reference batch mean equal to 0
+    out[["delta.star"]][ref,] <- 1  ## set reference batch variance equal to 1
+  }
   return(out)
 }
 
 
-getCorrectedData <- function(s.data, batchDict, 
-  estimators, naiveEstimators,
+getCorrectedData <- function(dat, 
+  s.data, 
+  dataDict, 
+  estimators, 
+  naiveEstimators,
   stdObjects,
   eb=TRUE){
   var.pooled=stdObjects$var.pooled
   stand.mean=stdObjects$stand.mean
-  batches <- batchDict$batches
-  batch.design <- batchDict$batch.design
-  n.batches <- batchDict$n.batches
-  n.array <- batchDict$n.array
+  batches <- dataDict$batches
+  batch.design <- dataDict$batch.design
+  n.batches <- dataDict$n.batches
+  n.array <- dataDict$n.array
+  ref.batch <- dataDict$ref.batch
+  ref <- dataDict$ref
   if (eb){
     gamma.star <- estimators[["gamma.star"]]
     delta.star <- estimators[["delta.star"]]
@@ -318,6 +370,9 @@ getCorrectedData <- function(s.data, batchDict,
       j <- j+1
   }
   bayesdata <- (bayesdata*(tcrossprod(sqrt(var.pooled), rep(1,n.array))))+stand.mean
+  if(!is.null(ref.batch)){
+        bayesdata[, batches[[ref]]] <- dat[, batches[[ref]]]
+  }
   return(bayesdata)
 }
 
@@ -331,45 +386,45 @@ getCorrectedData <- function(s.data, batchDict,
 #xmin: minimum value for x to be considered
 #xmax: maximum value for x to be considered
 #step=1: step for the grid; must be a positive integer
-createMatchingIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
+# createMatchingIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
 
-	stopifnot(length(x)==length(batch))
-	batches <- unique(batch)
-	n.batches <- length(batches)
-	x_per_batch <- split(x, f=batch)[batches]
-	if (is.null(xmin)) xmin <- min(x)
-	if (is.null(xmax)) xmax <- max(x)
-	grid <- seq(xmin,xmax,step)
-	n.bins <- length(grid)-1
+# 	stopifnot(length(x)==length(batch))
+# 	batches <- unique(batch)
+# 	n.batches <- length(batches)
+# 	x_per_batch <- split(x, f=batch)[batches]
+# 	if (is.null(xmin)) xmin <- min(x)
+# 	if (is.null(xmax)) xmax <- max(x)
+# 	grid <- seq(xmin,xmax,step)
+# 	n.bins <- length(grid)-1
 
-	# Creating count matrix:
-	counts <- matrix(0, n.bins, n.batches)
-	for (i in 1:n.bins){
-		counts[i,] <- unlist(lapply(x_per_batch, function(temp){
-			sum(temp >= grid[i] & temp < grid[i+1])
-		}))
-	}
-	mins <- unlist(apply(counts,1,min)) #Minimal count
-	indices <- c()
+# 	# Creating count matrix:
+# 	counts <- matrix(0, n.bins, n.batches)
+# 	for (i in 1:n.bins){
+# 		counts[i,] <- unlist(lapply(x_per_batch, function(temp){
+# 			sum(temp >= grid[i] & temp < grid[i+1])
+# 		}))
+# 	}
+# 	mins <- unlist(apply(counts,1,min)) #Minimal count
+# 	indices <- c()
 
-	# Creating indices:
-	for (i in 1:n.bins){
-		for (j in 1:n.batches){
-			min <- mins[i]
-			if (min!=0){
-				cand <- which(x >= grid[i] & x < grid[i+1] & batch==batches[j])
+# 	# Creating indices:
+# 	for (i in 1:n.bins){
+# 		for (j in 1:n.batches){
+# 			min <- mins[i]
+# 			if (min!=0){
+# 				cand <- which(x >= grid[i] & x < grid[i+1] & batch==batches[j])
 
-				if (length(cand) !=1){
-					cand <- sample(cand,min) # Sampling at random	
-				} 
+# 				if (length(cand) !=1){
+# 					cand <- sample(cand,min) # Sampling at random	
+# 				} 
 
 
-				indices <- c(indices, cand)
-			}
-		}
-	}
-	return(indices)
-}
+# 				indices <- c(indices, cand)
+# 			}
+# 		}
+# 	}
+# 	return(indices)
+# }
 
 .betaNA <- function(yy,designn){
       designn <- designn[!is.na(yy),]

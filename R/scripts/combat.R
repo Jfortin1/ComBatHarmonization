@@ -12,6 +12,7 @@ combat <- function(dat,
   eb=TRUE, 
   parametric=TRUE,
   mean.only=FALSE,
+  ref.batch=NULL,
   verbose=TRUE
 ){
   dat <- as.matrix(dat)
@@ -32,15 +33,15 @@ combat <- function(dat,
   }
 
   ##################### Getting design ############################
-  design    <- getDesignMatrix(batch, mod, verbose=verbose, mean.only=mean.only)
-  batchDict <- getBatchDict(batch, design)
+  dataDict <- getDataDict(batch, mod, verbose=verbose, mean.only=mean.only, ref.batch=ref.batch)
+  design <- dataDict[["design"]]
   ####################################################################
 
 
   ##################### Data standardization #######################
   if (verbose) cat('[combat] Standardizing Data across features\n')
   stdObjects <- getStandardizedData(dat=dat, 
-    batchDict=batchDict,
+    dataDict=dataDict,
     design=design,
     hasNAs=hasNAs
   )
@@ -52,7 +53,7 @@ combat <- function(dat,
   ##################### Getting L/S estimates #######################
   if (verbose) cat("[combat] Fitting L/S model and finding priors\n")
   naiveEstimators <- getNaiveEstimators(s.data=s.data,
-      batchDict=batchDict, 
+      dataDict=dataDict, 
       hasNAs=hasNAs,
       mean.only=mean.only
   )
@@ -67,12 +68,12 @@ combat <- function(dat,
       }
       estimators <- getEbEstimators(naiveEstimators=naiveEstimators, 
           s.data=s.data, 
-          batchDict=batchDict,
+          dataDict=dataDict,
           parametric=parametric,
           mean.only=mean.only
       )
   } else {
-      estimators <- getNonEbEstimators(naiveEstimators=naiveEstimators)
+      estimators <- getNonEbEstimators(naiveEstimators=naiveEstimators, dataDict=dataDict)
   }
   ####################################################################
  
@@ -80,8 +81,9 @@ combat <- function(dat,
 
   ######################### Correct data #############################
   if (verbose) cat("[combat] Adjusting the Data\n")
-  bayesdata <- getCorrectedData(s.data=s.data,
-      batchDict=batchDict,
+  bayesdata <- getCorrectedData(dat=dat,
+      s.data=s.data,
+      dataDict=dataDict,
       estimators=estimators,
       naiveEstimators=naiveEstimators,
       stdObjects=stdObjects,
@@ -99,7 +101,7 @@ combat <- function(dat,
     t2=estimators[["t2"]], 
     a.prior=estimators[["a.prior"]], 
     b.prior=estimators[["b.prior"]], 
-    batch=batch, mod=mod, 
+    batch=batch, mod=mod, ref.batch=ref.batch,
     stand.mean=stdObjects[["stand.mean"]], 
     stand.sd=sqrt(stdObjects[["var.pooled"]])
   ))
