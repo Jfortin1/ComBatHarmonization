@@ -61,7 +61,7 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 |----------------|---|--------|--------|
 | Parametric adjustments     | x | x      | x      |
 | Non-parametric adjustments | x | x      | x      |
-| Empirical Bayes   | x |        | x      |
+| Empirical Bayes   | x |   x     | x      |
 | No empirical Bayes   | x |        | x      |
 | Mean adjustment only | x |        |x        |
 | Reference batch | x |        |        |
