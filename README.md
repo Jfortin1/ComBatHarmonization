@@ -52,18 +52,18 @@ There are several alternative modes of running ComBat:
 The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license, which is compatible with the Artistic License 2.0 of `sva`. 
 
 - [R implementation webpage](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
-- [Matlab implementation webpage](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
 - [Python implementation webpage](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (neuroCombat)
+- [Matlab implementation webpage](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Matlab)
 
 ### Current implemented features
 
-|                | R | Matlab | Python |
+|                | R | Python | Matlab |
 |----------------|---|--------|--------|
 | Parametric adjustments     | x | x      | x      |
 | Non-parametric adjustments | x | x      | x      |
 | Empirical Bayes   | x |   x     | x      |
-| No empirical Bayes   | x |        | x      |
-| Mean adjustment only | x |        |x        |
+| No empirical Bayes   | x |    x    |       |
+| Mean adjustment only | x |    x    |        |
 | Reference batch | x |        |        |
 | Can handle missing values | x |        |        |
 
@@ -87,6 +87,8 @@ The `Testing` directory contains code for testing and comparing the outputs from
 <div id='id-section5'/>
 
 ## 5. News
+
+05-19-2020: Reference batch option (```ref.batch```) now implemented in R. 
 
 05-17-2020: Mean adjustement only option (```mean.only=True```) now implemented in both Python and R.
 
