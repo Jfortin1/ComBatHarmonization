@@ -41,7 +41,7 @@ Data inputs for ComBat are:
 
 There are several alternative modes of running ComBat:
 - ```parametric=FALSE```: will instead use a non-parametric prior method in the empirical Bayes procedure (default uses parametric priors).
-- ```eb=FALSE```: will not run the empirical Bayes procedure, and therefore location and scale parameters are not shrinked towards common factors averaged across features. This is equivalent to running a location-and-scale correction method for each feature separately. This is particularly useful for debugging and method development. 
+- ```eb=FALSE```: will not run the empirical Bayes procedure, and therefore location and scale parameters are not shrunk towards common factors averaged across features. This is equivalent to running a location-and-scale correction method for each feature separately. This is particularly useful for debugging and method development. 
 - ```mean.only=TRUE```: will only adjust the mean of the site effects across sites (default adjusts for mean and variance). This option is recommended for studies where the variances are expected to be different across sites due to the biology. 
 
 
@@ -64,7 +64,7 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 | Empirical Bayes   | x |   x     | x      |
 | No empirical Bayes   | x |    x    |       |
 | Mean adjustment only | x |    x    |        |
-| Reference batch | x |        |        |
+| Reference batch | x |    x    |        |
 | Can handle missing values | x |        |        |
 
 
@@ -88,11 +88,13 @@ The `Testing` directory contains code for testing and comparing the outputs from
 
 ## 5. News
 
+05-23-2020: Reference batch option (```ref.batch```) now implemented in Python.
+
 05-19-2020: Reference batch option (```ref.batch```) now implemented in R. 
 
-05-17-2020: Mean adjustement only option (```mean.only=True```) now implemented in both Python and R.
+05-17-2020: Mean adjustment only option (```mean.only=True```) now implemented in both Python and R.
 
-05-15-2020: Non-parametric adjustements (```parametric=False```), and ```eb=False``` now implemented in both Python and R.
+05-15-2020: Non-parametric adjustments (```parametric=False```), and ```eb=False``` now implemented in both Python and R.
 
 05-14-2020: We migrated our official Python implementation (neuroCombat) here for maintainability. 
 

@@ -1,6 +1,6 @@
 library(tidyverse)
 tol <- 10e-4
-types <- c("parametric_adjusted",
+types1 <- c("parametric_adjusted",
 	"parametric_unadjusted",
 	"nonparametric_adjusted",
 	"nonparametric_unadjusted",
@@ -17,6 +17,8 @@ types <- c("parametric_adjusted",
 	"nonparametric_adjusted_noeb_meanonly",
 	"nonparametric_unadjusted_noeb_meanonly"
 )
+types2 <- paste0(types1, "_batchref")
+types <- c(types1, types2)
 files.r <- paste0("testdata_combat_", types, "_r.csv")
 files.matlab <- paste0("testdata_combat_", types, "_matlab.csv")
 files.python <- paste0("testdata_combat_", types, "_python.csv")
@@ -31,7 +33,7 @@ for (i in avail){
 }
 
 # Python vs R
-avail <- c(1:16)
+avail <- c(1:32)
 for (i in avail){
 	data_r <- read.csv(file.path("outputData", files.r[i])) %>% as.matrix
 	data_python <- read.csv(file.path("outputData", files.python[i]), head=FALSE) %>% as.matrix
