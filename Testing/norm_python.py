@@ -6,7 +6,7 @@ os.chdir('/Users/fortinj2/ComBatHarmonization/testing')
 data = np.genfromtxt('inputData/testdata.csv', delimiter=",", skip_header=1)
 categorical_cols = ['gender']
 batch_col = 'batch'
-data[1,1] = None
+
 
 
 covars = {'batch':[1,1,1,1,1,2,2,2,2,2], 'gender':[1,2,1,2,1,2,1,2,1,2]} 
