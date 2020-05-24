@@ -1,5 +1,3 @@
 # ComBat harmonization in Python
 
-This is a modified and extended version of [neuroCombat](https://github.com/ncullen93/neuroCombat) (written by Nick Cullen) previously 
-discussed and advertised in [our latest paper](https://www.sciencedirect.com/science/article/pii/S105381191730931X).
-neuroCombat does not seem to be maintained anymore, and therefore we recommend to use this Python implementation instead. 
+This is the maintained and official version of neuroCombat (previously hosted [here](https://github.com/ncullen93/neuroCombat)) introduced in our [our recent paper](https://www.sciencedirect.com/science/article/pii/S105381191730931X).
