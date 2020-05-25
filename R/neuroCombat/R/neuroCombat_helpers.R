@@ -3,8 +3,14 @@
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
 # The original and present code is under the Artistic License 2.0.
 # If using this code, make sure you agree and accept this license.  
-library(matrixStats)
 
+
+.betaNA <- function(yy,designn){
+      designn <- designn[!is.na(yy),]
+      yy <- yy[!is.na(yy)]
+      B <- solve(crossprod(designn), crossprod(designn, yy))
+      B
+}
 
 .checkNARows <- function(dat){
 	nas <- rowSums(is.na(dat))
@@ -96,8 +102,6 @@ getDataDict <- function(batch, mod, verbose, mean.only, ref.batch=NULL){
 
 
 
-
-  
 getStandardizedData <- function(dat, dataDict, design, hasNAs){
     batches=dataDict$batches
     n.batches=dataDict$n.batches
@@ -426,10 +430,5 @@ getCorrectedData <- function(dat,
 # 	return(indices)
 # }
 
-.betaNA <- function(yy,designn){
-      designn <- designn[!is.na(yy),]
-      yy <- yy[!is.na(yy)]
-      B <- solve(crossprod(designn), crossprod(designn, yy))
-      B
-}
+
 

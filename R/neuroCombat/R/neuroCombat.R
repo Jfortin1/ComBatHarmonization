@@ -1,12 +1,11 @@
 # Author: Jean-Philippe Fortin, fortin946@gmail.com
 # This is a modification of the ComBat function code from the sva package that can be found at
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
-# The original and present code is under the Artistic License 2.0.
+# The present code is under the Artistic License 2.0.
 # If using this code, make sure you agree and accept this license. 
-# Code optimization improved by Richard Beare 
 
-
-combat <- function(dat, 
+#' @export
+neuroCombat <- function(dat, 
   batch, 
   mod=NULL, 
   eb=TRUE, 

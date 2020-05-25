@@ -7,6 +7,15 @@
 
 <div id='id-section1'/>
 
+
+##### Software status
+
+| Resource:   | Travis CI                                                                                                                                            |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Platform:   | Linux                                                                                                                                                |
+| R CMD check | <a href="https://travis-ci.org/Jfortin1/ComBatHarmonization/R/neuroCombat"><img src="https://travis-ci.org/Jfortin1/ComBatHarmonization/R/neuroCombat.svg?branch=master" alt="Build status"></a> |
+
+
 ## 1. Installation
  
 To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into a fresh R session. 
