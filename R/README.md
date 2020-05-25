@@ -1,5 +1,12 @@
 # ComBat harmonization in R
 
+##### Software status
+
+| Resource:   | Travis CI                                                                                                                                            |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Platform:   | Linux                                                                                                                                                |
+| R CMD check | <a href="https://travis-ci.org/Jfortin1/ComBatHarmonization"><img src="https://travis-ci.org/Jfortin1/ComBatHarmonization.svg?branch=master" alt="Build status"></a> |
+
 ## Table of content
 - [1. Installation](#id-section1)
 - [2. Harmonization](#id-section2)
@@ -11,7 +18,11 @@
 
 ## 1. Installation
  
-To use ComBat, load the two scripts `/scripts/combat.R` and `scripts/utils.R` into a fresh R session. 
+neuroCombat can be installed in R by typing the following commands:
+```{r}
+library(devtools)
+install_github("jfortin1/CombatHarmonization/R/neuroCombat")
+```
 
 <div id='id-section2'/>
 
@@ -21,28 +32,27 @@ ComBat estimates scanner-specific location and scale parameters, for each featur
 
 ### 2.1 Full ComBat with empirical Bayes
 
-The  `combat` function is the main function. It requires two mandatory arguments:
+The  `neuroCombat` function is the main function. It requires two mandatory arguments:
 - a data matrix (p x n) `dat` for which the p rows are features, and the n columns are participants. 
 - a numeric or character vector `batch` of length n indicating the site/scanner/study id. 
 
 For illustration purpose, let's simulate an imaging dataset with n=10 participants, acquired on 2 scanners, with 5 participants each, with p=10000 voxels per scan. 
 
 ```r
-source("scripts/utils.R");
-source("scripts/combat.R")
+library(neuroCombat)
 p=10000
 n=10
 batch = c(1,1,1,1,1,2,2,2,2,2) #Batch variable for the scanner id
 dat = matrix(runif(p*n), p, n) #Random Data matrix
 ```
-We use the function `combat` to harmonize the data across the 2 scanners:
+We use the function `neuroCombat` to harmonize the data across the 2 scanners:
 
 ```r
-data.harmonized <- combat(dat=dat, batch=batch)
+data.harmonized <- neuroCombat(dat=dat, batch=batch)
 ```
 By default, this uses parametric adjustments. To following command must be used for non-parametric adjustments:
 ```r
-data.harmonized <- combat(dat=dat, batch=batch, parametric=FALSE)
+data.harmonized <- neuroCombat(dat=dat, batch=batch, parametric=FALSE)
 ```
 
 The harmonized matrix is stored in `data.harmonized$dat.combat`. The `data.harmonized` object also contains the different parameters estimated by ComBat:
@@ -50,7 +60,7 @@ The harmonized matrix is stored in `data.harmonized$dat.combat`. The `data.harmo
 - `gamma.star` and `delta.star`: Empirical Bayes estimated L/S parameters.
 - `gamma.bar`, `t2`, `a.prior` and `b.prior`: esimated prior distributions parameters.
 
-The ComBat algorithm also accepts an optional argument, `mod`, which is a matrix containing biological covariates, including the outcome of interest. This is recommended to ensure that biological variability is preserved in the harmonization process. For instance, for a study with age and disease covariates,
+`neuroCombat` also accepts an optional argument, `mod`, which is a matrix containing biological covariates, including the outcome of interest. This is recommended to ensure that biological variability is preserved in the harmonization process. For instance, for a study with age and disease covariates,
 ```r
 age <- c(82,70,68,66,80,69,72,76,74,80) # Continuous variable
 disease <- as.factor(c(1,2,1,2,1,2,1,2,1,2)) # Categorical variable
@@ -75,7 +85,7 @@ mod
 The matrix `mod` is a n x 3 matrix, containing an intercept, age and a dummy variable for the second level of the disease variable (the first level is taken as the baseline group). Note that including an intercept in the model matrix will not change the results of the algorithm; ComBat automatically removes the intercept from the model matrix when fitting the models. We now harmonize the data:
 
 ```r
-combat.harmonized <- combat(dat=dat, batch=batch, mod=mod)
+combat.harmonized <- neuroCombat(dat=dat, batch=batch, mod=mod)
 ```
 
 ### 2.2 ComBat without empirical Bayes
@@ -88,7 +98,7 @@ Sometimes, it is preferable not to pool information across features, for instanc
 An example of (2) is studies with site/scanner effects that are highly heteregenous across features, for instance differential scanner effects between white matter (WM) or grey matter (GM) voxels exist. To run the ComBat model without empirical Bayes, which boils down to fitting a location/shift (L/S) model for each feature separately, the option `eb=FALSE` can be used:
 
 ```r
-data.harmonized <- combat(dat=dat, batch=batch, eb=FALSE)
+data.harmonized <- neuroCombat(dat=dat, batch=batch, eb=FALSE)
 ```
 
 
