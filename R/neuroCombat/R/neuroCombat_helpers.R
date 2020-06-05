@@ -160,14 +160,14 @@ getStandardizedData <- function(dat, dataDict, design, hasNAs){
 }
 
 # Following four find empirical hyper-prior values
-aprior <- function(gamma.hat){
-	m=mean(gamma.hat)
-	s2=var(gamma.hat)
+aprior <- function(delta.hat){
+	m=mean(delta.hat)
+	s2=var(delta.hat)
 	(2*s2+m^2)/s2
 }
-bprior <- function(gamma.hat){
-	m=mean(gamma.hat)
-	s2=var(gamma.hat)
+bprior <- function(delta.hat){
+	m=mean(delta.hat)
+	s2=var(delta.hat)
 	(m*s2+m^3)/s2
 }
 postmean <- function(g.hat,g.bar,n,d.star,t2){
@@ -177,14 +177,14 @@ postvar <- function(sum2,n,a,b){
 	(.5*sum2+b)/(n/2+a-1)
 }
 
-apriorMat <- function(gamma.hat) {
-  m <- rowMeans2(gamma.hat)
-  s2 <- rowVars(gamma.hat)
+apriorMat <- function(delta.hat) {
+  m  <- rowMeans2(delta.hat)
+  s2 <- rowVars(delta.hat)
   return((2*s2+m^2)/s2)
 }
-bpriorMat <- function(gamma.hat) {
-  m <- rowMeans2(gamma.hat)
-  s2 <- rowVars(gamma.hat)
+bpriorMat <- function(delta.hat) {
+  m <- rowMeans2(delta.hat)
+  s2 <- rowVars(delta.hat)
   return((m*s2+m^3)/s2)
 }
 # Pass in entire data set, the design matrix for the entire data, the batch means, the batch variances, priors (m, t2, a, b), columns of the data  matrix for the batch. Uses the EM to find the parametric batch adjustments
