@@ -12,7 +12,8 @@ function bayesdata = combat(dat, batch, mod, parametric)
     if ns>0
         error('Error. There are rows with constant values across samples. Remove these rows and rerun ComBat.')
     end
-	batchmod = dummyvar(batch);
+    batchmod = categorical(batch);
+    batchmod = dummaryvar({batchmod});
 	n_batch = size(batchmod,2);
 	levels = unique(batch);
 	fprintf('[combat] Found %d batches\n', n_batch);
