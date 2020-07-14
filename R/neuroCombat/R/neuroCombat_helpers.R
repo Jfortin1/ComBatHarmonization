@@ -58,7 +58,7 @@ getDataDict <- function(batch, mod, verbose, mean.only, ref.batch=NULL){
     n.batch <- nlevels(batch)
     batches <- lapply(levels(batch), function(x)which(batch==x))
     n.batches <- sapply(batches, length)
-    n.array <- sum(n.batches)
+    n.array  <- sum(n.batches)
     batchmod <- model.matrix(~-1+batch)  
     if (verbose) cat("[combat] Found",nlevels(batch),'batches\n')
     if(any(n.batches==1) & mean.only==FALSE){
@@ -88,6 +88,9 @@ getDataDict <- function(batch, mod, verbose, mean.only, ref.batch=NULL){
     n.covariates <- ncol(design)-ncol(batchmod)
     if (verbose) cat("[combat] Adjusting for ",n.covariates,' covariate(s) or covariate level(s)\n')
       out <- list()
+    #Making sure to keep track of names:
+    names(batches)   <- names(n.batches) <- levels(batch)
+    colnames(design) <- gsub("batch", "", colnames(design))
     out[["batch"]] <- batch
     out[["batches"]] <- batches
     out[["n.batch"]] <- n.batch
@@ -159,6 +162,9 @@ getStandardizedData <- function(dat, dataDict, design, hasNAs){
       mod.mean <- 0
     }
     s.data <- (dat-stand.mean-mod.mean)/(tcrossprod(sqrt(var.pooled), rep(1,n.array)))
+    names(var.pooled) <- rownames(dat)
+    rownames(stand.mean) <- rownames(mod.mean) <- rownames(dat)
+    colnames(stand.mean) <- colnames(mod.mean) <- colnames(dat)
     return(list(s.data=s.data, 
         stand.mean=stand.mean,
         mod.mean=mod.mean, 
@@ -180,12 +186,16 @@ bprior <- function(delta.hat){
 apriorMat <- function(delta.hat) {
   m  <- rowMeans2(delta.hat)
   s2 <- rowVars(delta.hat)
-  return((2*s2+m^2)/s2)
+  out <- (2*s2+m^2)/s2
+  names(out) <- rownames(delta.hat)
+  return(out)
 }
 bpriorMat <- function(delta.hat) {
   m <- rowMeans2(delta.hat)
   s2 <- rowVars(delta.hat)
-  return((m*s2+m^3)/s2)
+  out <- (m*s2+m^3)/s2
+  names(out) <- rownames(delta.hat)
+  return(out)
 }
 postmean <- function(g.hat, g.bar, n, d.star, t2){
   (t2*n*g.hat+d.star*g.bar)/(t2*n+d.star)
@@ -262,6 +272,8 @@ getNaiveEstimators <- function(s.data, dataDict, hasNAs, mean.only){
         delta.hat <- rbind(delta.hat,rowVars(s.data, cols=i, na.rm=TRUE))
       }    
     }
+    colnames(gamma.hat)  <- colnames(delta.hat) <- rownames(s.data)
+    rownames(gamma.hat)  <- rownames(delta.hat) <- names(batches)
     return(list(gamma.hat=gamma.hat, delta.hat=delta.hat))
 }
 
@@ -290,6 +302,7 @@ getEbEstimators <- function(naiveEstimators,
                   delta.star <- rbind(delta.star,temp[2,])
                 }
             }
+            rownames(gamma.star) <- rownames(delta.star) <- names(batches)
             return(list(gamma.star=gamma.star, delta.star=delta.star))
       }
       .getNonParametricEstimators <- function(){
@@ -302,10 +315,12 @@ getEbEstimators <- function(naiveEstimators,
               gamma.star <- rbind(gamma.star,temp[1,])
               delta.star <- rbind(delta.star,temp[2,])
           }
+          rownames(gamma.star) <- rownames(delta.star) <- names(batches)
           return(list(gamma.star=gamma.star, delta.star=delta.star))
       }
       gamma.bar <- rowMeans(gamma.hat, na.rm=TRUE)
       t2 <- rowVars(gamma.hat, na.rm=TRUE)
+      names(t2) <- rownames(gamma.hat)
       a.prior <- apriorMat(delta.hat)
       b.prior <- bpriorMat(delta.hat)
       if (parametric){

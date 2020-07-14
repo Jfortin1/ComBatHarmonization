@@ -1,6 +1,6 @@
 Package: neuroCombat
 Title: Harmonization of multi-site imaging data with ComBat
-Version: 1.0.3
+Version: 1.0.4
 Author: Jean-Philippe Fortin
 Maintainer: Jean-Philippe Fortin <fortin946@gmail.com>
 Depends: R (>= 3.6.0), 
