@@ -1,7 +1,10 @@
 # Author: Jean-Philippe Fortin, fortin946@gmail.com
+# Date: July 14 2020
+# Projet repo: github.com/Jfortin1/ComBatHarmonization
 # This is a modification of the ComBat function code from the sva package that can be found at
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
-# The present code is under the Artistic License 2.0.
+# The original code is under the Artistic License 2.0.
+# The present code is under the MIT license
 # If using this code, make sure you agree and accept this license. 
 
 #' @export
@@ -91,6 +94,7 @@ neuroCombat <- function(dat,
   ####################################################################
 
 
+
   return(list(dat.combat=bayesdata, 
     gamma.hat=naiveEstimators[["gamma.hat"]], 
     delta.hat=naiveEstimators[["delta.hat"]], 
@@ -102,6 +106,7 @@ neuroCombat <- function(dat,
     b.prior=estimators[["b.prior"]], 
     batch=batch, mod=mod, ref.batch=ref.batch,
     stand.mean=stdObjects[["stand.mean"]], 
+    mod.mean=stdObjects[["mod.mean"]], 
     stand.sd=sqrt(stdObjects[["var.pooled"]])
   ))
 }

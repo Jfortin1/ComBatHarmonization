@@ -1,7 +1,12 @@
 Changes in Version 1.0.1:
-- R: ComBat now accepts missing values. Note: our way of calculating feature variances (rows) differs from the SVA package. 
-SVA: Variance denominator used when there is no missing values: n
-SVA: Variance denominator used when there are missing values: m-1 (m=total number of non-missing values)
-ComBatHarmonization: Variance denominator used when there is no missing values: n
-ComBatHarmonization: Variance denominator used when there are missing values: m (m=total number of non-missing values)
-By simulating missing values, we have shown that there is much more better agreement between the datasets. 
+	- ComBat now accepts missing values. Note: our way of calculating feature variances (rows) differs from the SVA package. 
+		SVA: Variance denominator used when there is no missing values: n
+		SVA: Variance denominator used when there are missing values: m-1 (m=total number of non-missing values)
+		ComBatHarmonization: Variance denominator used when there is no missing values: n
+		ComBatHarmonization: Variance denominator used when there are missing values: m (m=total number of non-missing values)
+		By simulating missing values, we have shown that there is much more better agreement between the datasets. 
+
+Changes in Version 1.0.3
+	- In the internal code, we now decouple the standardized mean into two components: intercept (stand.mean) and model mean (mod.mean). 
+	  The reason is to be able to use stand.mean only when applying scanner correction on a test dataset without making assumption for biological covariates.
+	

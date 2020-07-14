@@ -1,8 +1,11 @@
-# This is a copy of the original code from the standard version of the
-# sva package that can be found at
+# Author: Jean-Philippe Fortin, fortin946@gmail.com
+# Date: July 14 2020
+# Projet repo: github.com/Jfortin1/ComBatHarmonization
+# This is a modification of the ComBat function code from the sva package that can be found at
 # https://bioconductor.org/packages/release/bioc/html/sva.html 
-# The original and present code is under the Artistic License 2.0.
-# If using this code, make sure you agree and accept this license.  
+# The original code is under the Artistic License 2.0.
+# The present code is under the MIT license
+# If using this code, make sure you agree and accept this license. 
 
 
 .betaNA <- function(yy,designn){
@@ -150,11 +153,15 @@ getStandardizedData <- function(dat, dataDict, design, hasNAs){
     if(!is.null(design)){
       tmp <- design
       tmp[,c(1:n.batch)] <- 0
-      stand.mean <- stand.mean+t(tmp%*%B.hat)
-    } 
-    s.data <- (dat-stand.mean)/(tcrossprod(sqrt(var.pooled), rep(1,n.array)))
+      mod.mean <- t(tmp%*%B.hat)
+      #stand.mean <- stand.mean+t(tmp%*%B.hat)
+    } else {
+      mod.mean <- 0
+    }
+    s.data <- (dat-stand.mean-mod.mean)/(tcrossprod(sqrt(var.pooled), rep(1,n.array)))
     return(list(s.data=s.data, 
-        stand.mean=stand.mean, 
+        stand.mean=stand.mean,
+        mod.mean=mod.mean, 
         var.pooled=var.pooled)
     )
 }
@@ -170,13 +177,6 @@ bprior <- function(delta.hat){
 	s2=var(delta.hat)
 	(m*s2+m^3)/s2
 }
-postmean <- function(g.hat,g.bar,n,d.star,t2){
-	(t2*n*g.hat+d.star*g.bar)/(t2*n+d.star)
-}
-postvar <- function(sum2,n,a,b){
-	(.5*sum2+b)/(n/2+a-1)
-}
-
 apriorMat <- function(delta.hat) {
   m  <- rowMeans2(delta.hat)
   s2 <- rowVars(delta.hat)
@@ -187,30 +187,32 @@ bpriorMat <- function(delta.hat) {
   s2 <- rowVars(delta.hat)
   return((m*s2+m^3)/s2)
 }
-# Pass in entire data set, the design matrix for the entire data, the batch means, the batch variances, priors (m, t2, a, b), columns of the data  matrix for the batch. Uses the EM to find the parametric batch adjustments
+postmean <- function(g.hat, g.bar, n, d.star, t2){
+  (t2*n*g.hat+d.star*g.bar)/(t2*n+d.star)
+}
+postvar <- function(sum2, n, a, b){
+  (.5*sum2+b)/(n/2+a-1)
+}
 
 # Helper function for parametric adjustements:
-it.sol  <- function(sdat,g.hat,d.hat,g.bar,t2,a,b,conv=.0001){
+it.sol  <- function(sdat, g.hat, d.hat, g.bar, t2, a, b, conv=.0001){
 	#n <- apply(!is.na(sdat),1,sum)
 	n <- rowSums(!is.na(sdat))
-	g.old <- g.hat
-	d.old <- d.hat
+	g.old  <- g.hat
+	d.old  <- d.hat
 	change <- 1
-	count <- 0
+	count  <- 0
 	ones <- rep(1,ncol(sdat))
 
 	while(change>conv){
 		g.new  <- postmean(g.hat,g.bar,n,d.old,t2)
-		#sum2   <- apply((sdat-g.new%*%t(rep(1,ncol(sdat))))^2, 1, sum,na.rm=T)
-		#sum2   <- apply((sdat-tcrossprod(g.new, rep(1,ncol(sdat))))^2, 1, sum,na.rm=T)
-		sum2 <- rowSums2((sdat-tcrossprod(g.new, ones))^2, na.rm=TRUE)
+		sum2   <- rowSums2((sdat-tcrossprod(g.new, ones))^2, na.rm=TRUE)
 		d.new  <- postvar(sum2,n,a,b)
 		change <- max(abs(g.new-g.old)/g.old,abs(d.new-d.old)/d.old)
 		g.old <- g.new
 		d.old <- d.new
 		count <- count+1
 		}
-	#cat("This batch took", count, "iterations until convergence\n")
 	adjust <- rbind(g.new, d.new)
 	rownames(adjust) <- c("g.star","d.star")
 	adjust
@@ -265,7 +267,8 @@ getNaiveEstimators <- function(s.data, dataDict, hasNAs, mean.only){
 
 
 getEbEstimators <- function(naiveEstimators,
-      s.data, dataDict,
+      s.data, 
+      dataDict,
       parametric=TRUE, 
       mean.only=FALSE
 ){
@@ -325,7 +328,7 @@ getEbEstimators <- function(naiveEstimators,
 }
 
 
-getNonEbEstimators <- function(naiveEstimators,dataDict){
+getNonEbEstimators <- function(naiveEstimators, dataDict){
   out <- list()
   out[["gamma.star"]] <- naiveEstimators[["gamma.hat"]]
   out[["delta.star"]] <- naiveEstimators[["delta.hat"]]
@@ -349,9 +352,11 @@ getCorrectedData <- function(dat,
   estimators, 
   naiveEstimators,
   stdObjects,
-  eb=TRUE){
+  eb=TRUE
+){
   var.pooled=stdObjects$var.pooled
   stand.mean=stdObjects$stand.mean
+  mod.mean=stdObjects$mod.mean
   batches <- dataDict$batches
   batch.design <- dataDict$batch.design
   n.batches <- dataDict$n.batches
@@ -373,62 +378,9 @@ getCorrectedData <- function(dat,
       bayesdata[,i] <- top/bottom
       j <- j+1
   }
-  bayesdata <- (bayesdata*(tcrossprod(sqrt(var.pooled), rep(1,n.array))))+stand.mean
+  bayesdata <- (bayesdata*(tcrossprod(sqrt(var.pooled), rep(1,n.array))))+stand.mean+mod.mean
   if(!is.null(ref.batch)){
         bayesdata[, batches[[ref]]] <- dat[, batches[[ref]]]
   }
   return(bayesdata)
 }
-
-
-
-
-
-# Create indices for matched samples across sites, for one covariate.
-#batch: site, study or scanner covariate
-#x: continuous covariate
-#xmin: minimum value for x to be considered
-#xmax: maximum value for x to be considered
-#step=1: step for the grid; must be a positive integer
-# createMatchingIndices <- function(x, batch, xmin=NULL, xmax=NULL, step=1){
-
-# 	stopifnot(length(x)==length(batch))
-# 	batches <- unique(batch)
-# 	n.batches <- length(batches)
-# 	x_per_batch <- split(x, f=batch)[batches]
-# 	if (is.null(xmin)) xmin <- min(x)
-# 	if (is.null(xmax)) xmax <- max(x)
-# 	grid <- seq(xmin,xmax,step)
-# 	n.bins <- length(grid)-1
-
-# 	# Creating count matrix:
-# 	counts <- matrix(0, n.bins, n.batches)
-# 	for (i in 1:n.bins){
-# 		counts[i,] <- unlist(lapply(x_per_batch, function(temp){
-# 			sum(temp >= grid[i] & temp < grid[i+1])
-# 		}))
-# 	}
-# 	mins <- unlist(apply(counts,1,min)) #Minimal count
-# 	indices <- c()
-
-# 	# Creating indices:
-# 	for (i in 1:n.bins){
-# 		for (j in 1:n.batches){
-# 			min <- mins[i]
-# 			if (min!=0){
-# 				cand <- which(x >= grid[i] & x < grid[i+1] & batch==batches[j])
-
-# 				if (length(cand) !=1){
-# 					cand <- sample(cand,min) # Sampling at random	
-# 				} 
-
-
-# 				indices <- c(indices, cand)
-# 			}
-# 		}
-# 	}
-# 	return(indices)
-# }
-
-
-
