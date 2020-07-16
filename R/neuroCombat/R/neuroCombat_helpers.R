@@ -168,7 +168,9 @@ getStandardizedData <- function(dat, dataDict, design, hasNAs){
     return(list(s.data=s.data, 
         stand.mean=stand.mean,
         mod.mean=mod.mean, 
-        var.pooled=var.pooled)
+        var.pooled=var.pooled,
+        beta.hat=B.hat
+        )
     )
 }
 

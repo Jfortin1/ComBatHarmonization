@@ -4,10 +4,10 @@
 \alias{drawPriorGamma}
 \title{Draw prior distributions of location parameters (gamma estimates)}
 \usage{
-drawPriorGamma(normData, col = NULL, xlim = c(-3, 1.5), ylim = c(0, 3))
+drawPriorGamma(combat.estimates, col = NULL, xlim = c(-3, 1.5), ylim = c(0, 3))
 }
 \arguments{
-\item{normData}{A list of normalized data and parameters returned by neuroCombat}
+\item{combat.estimates}{estimates list from neuroCombat output}
 
 \item{col}{Character or numeric vector specifying site colors. If NULL, default colors will be used.}
 

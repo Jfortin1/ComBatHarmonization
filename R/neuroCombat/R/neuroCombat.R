@@ -23,15 +23,15 @@ neuroCombat <- function(dat,
    ## Check for missing values
   hasNAs <- any(is.na(dat))
   if (hasNAs & verbose){
-    cat(paste0("[combat] Found ", sum(is.na(dat)), " missing data values. \n"))
+    cat(paste0("[neuroCombat] Found ", sum(is.na(dat)), " missing data values. \n"))
   }
   if(mean.only){
-      if (verbose) cat("[combat] Performing ComBat with mean only\n")
+      if (verbose) cat("[neuroCombat] Performing ComBat with mean only\n")
   }
   if (eb){
-      if (verbose) cat("[combat] Performing ComBat with empirical Bayes\n")
+      if (verbose) cat("[neuroCombat] Performing ComBat with empirical Bayes\n")
   } else {
-      if (verbose) cat("[combat] Performing ComBat without empirical Bayes (L/S model)\n")
+      if (verbose) cat("[neuroCombat] Performing ComBat without empirical Bayes (L/S model)\n")
   }
 
   ##################### Getting design ############################
@@ -41,7 +41,7 @@ neuroCombat <- function(dat,
 
 
   ##################### Data standardization #######################
-  if (verbose) cat('[combat] Standardizing Data across features\n')
+  if (verbose) cat('[neuroCombat] Standardizing Data across features\n')
   stdObjects <- getStandardizedData(dat=dat, 
     dataDict=dataDict,
     design=design,
@@ -53,7 +53,7 @@ neuroCombat <- function(dat,
 
 
   ##################### Getting L/S estimates #######################
-  if (verbose) cat("[combat] Fitting L/S model and finding priors\n")
+  if (verbose) cat("[neuroCombat] Fitting L/S model and finding priors\n")
   naiveEstimators <- getNaiveEstimators(s.data=s.data,
       dataDict=dataDict, 
       hasNAs=hasNAs,
@@ -65,8 +65,8 @@ neuroCombat <- function(dat,
   ######################### Getting final estimators ####################
   if (eb){
       if (parametric){
-        if (verbose) cat("[combat] Finding parametric adjustments\n")}else{
-        if (verbose) cat("[combat] Finding non-parametric adjustments\n")
+        if (verbose) cat("[neuroCombat] Finding parametric adjustments\n")}else{
+        if (verbose) cat("[neuroCombat] Finding non-parametric adjustments\n")
       }
       estimators <- getEbEstimators(naiveEstimators=naiveEstimators, 
           s.data=s.data, 
@@ -82,7 +82,7 @@ neuroCombat <- function(dat,
 
 
   ######################### Correct data #############################
-  if (verbose) cat("[combat] Adjusting the Data\n")
+  if (verbose) cat("[neuroCombat] Adjusting the Data\n")
   bayesdata <- getCorrectedData(dat=dat,
       s.data=s.data,
       dataDict=dataDict,
@@ -94,9 +94,8 @@ neuroCombat <- function(dat,
   ####################################################################
 
 
-
-  return(list(dat.combat=bayesdata, 
-    gamma.hat=naiveEstimators[["gamma.hat"]], 
+  # List of estimates:
+  estimates <- list(gamma.hat=naiveEstimators[["gamma.hat"]], 
     delta.hat=naiveEstimators[["delta.hat"]], 
     gamma.star=estimators[["gamma.star"]],
     delta.star=estimators[["delta.star"]], 
@@ -104,9 +103,60 @@ neuroCombat <- function(dat,
     t2=estimators[["t2"]], 
     a.prior=estimators[["a.prior"]], 
     b.prior=estimators[["b.prior"]], 
-    batch=batch, mod=mod, ref.batch=ref.batch,
     stand.mean=stdObjects[["stand.mean"]], 
     mod.mean=stdObjects[["mod.mean"]], 
-    stand.sd=sqrt(stdObjects[["var.pooled"]])
-  ))
+    var.pooled=stdObjects[["var.pooled"]],
+    beta.hat=stdObjects[["beta.hat"]],
+    mod=mod, 
+    batch=batch, 
+    ref.batch=ref.batch, 
+    eb=eb, 
+    parametric=parametric, 
+    mean.only=mean.only
+  )
+
+  return(list(dat.combat=bayesdata, estimates=estimates))
 }
+
+
+
+                       
+#' @export
+neuroCombatFromTraining <- function(dat, batch, estimates, mod=NULL, verbose=TRUE){
+  cat("[neuroCombatFromTraining] In development ...\n")
+  new.levels <- unique(batch)
+  missing.levels <- new.levels[!new.levels %in% estimates$batch]
+  if (length(missing.levels)!=0){
+    stop(paste0("The batches ", missing.levels, " are not part of the training dataset\n"))
+  }
+
+  # Step 0: standardize data
+  var.pooled <- estimates$var.pooled
+  stand.mean <- estimates$stand.mean[,1]
+  mod.mean   <- estimates$mod.mean
+  gamma.star <- estimates$gamma.star
+  delta.star <- estimates$delta.star
+  n.array  <- ncol(dat)
+  
+  if (!is.null(estimates$mod)){
+    if (verbose){
+      cat("[neuroCombatFromTraining] Using mean imputation to account for previous covariates adjustment in training dataset\n")
+    }
+  }
+
+  if (is.null(mod)){
+    stand.mean <- stand.mean+rowMeans(mod.mean)
+  } else {
+    stop("Including covariates for ComBat correction on a new dataset is not supported yet\n")
+  }
+  # Step 1: standardize data
+  bayesdata <- (dat-stand.mean)/sqrt(var.pooled)
+  # Step 2: remove estimates
+  gamma     <- t(gamma.star[batch,,drop=FALSE])
+  delta     <- t(delta.star[batch,,drop=FALSE])
+  bayesdata <- (bayesdata-gamma)/sqrt(delta)
+  # Step 3: transforming to original scale
+  bayesdata <- bayesdata*sqrt(var.pooled) + stand.mean
+  return(bayesdata)
+}
+

@@ -4,16 +4,16 @@
 \alias{drawPriorDelta}
 \title{Draw prior distributions of scale parameters (delta estimates)}
 \usage{
-drawPriorDelta(normData, col = NULL, xlim = c(-0.3, 2), ylim = c(0, 3))
+drawPriorDelta(estimates, col = NULL, xlim = c(-0.3, 2), ylim = c(0, 3))
 }
 \arguments{
-\item{normData}{A list of normalized data and parameters returned by neuroCombat}
-
 \item{col}{Character or numeric vector specifying site colors. If NULL, default colors will be used.}
 
 \item{xlim}{x-axis limits}
 
 \item{ylim}{y-axis limits#'}
+
+\item{combat.estimates}{estimates list from neuroCombat output}
 }
 \value{
 Nothing. A plot will be produced as side effect.

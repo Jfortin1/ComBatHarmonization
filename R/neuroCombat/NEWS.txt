@@ -12,6 +12,9 @@ Changes in Version 1.0.3
 
 Changes in Version 1.0.4
 	- All objects in output have now consistent names (colnames and rownames)
+
+Changes in Version 1.0.5
+	- Started adding training/test functionalities
 	  
 
 	

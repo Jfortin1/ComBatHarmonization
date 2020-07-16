@@ -3,6 +3,7 @@
 export(drawPriorDelta)
 export(drawPriorGamma)
 export(neuroCombat)
+export(neuroCombatFromTraining)
 importFrom(graphics,lines)
 importFrom(graphics,plot)
 importFrom(matrixStats,rowMeans2)
