@@ -8,7 +8,7 @@ categorical_cols = ['gender']
 batch_col = 'batch'
 
 
-
+#covars = {'batch':["a","a","a","a","a","b","b","b","b","b"], 'gender':[1,2,1,2,1,2,1,2,1,2]} 
 covars = {'batch':[1,1,1,1,1,2,2,2,2,2], 'gender':[1,2,1,2,1,2,1,2,1,2]} 
 covars = pd.DataFrame(covars)   
 data_combat = neuroCombat(dat=data,covars=covars,batch_col=batch_col,categorical_cols=categorical_cols)
