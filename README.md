@@ -4,7 +4,11 @@
 --------
 **Maintainer**: Jean-Philippe Fortin, fortin946@gmail.com
 
-**License**: MIT License 
+**Licenses**: 
+
+- R code: Artistic 2.0 License
+- Python code: MIT License
+- Matlab code: MIT License
 
 **References**: If you are using ComBat for the harmonization of multi-site imaging data, please cite the following papers:
 
@@ -50,7 +54,7 @@ There are several alternative modes of running ComBat:
 
 ## 2. Software implementations
 
-The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license, which is compatible with the Artistic License 2.0 of `sva`. 
+The reference implementation (Standard Version) of ComBat, developed for gene expression analyses, is written in R and is part of the `sva` package available through the Bioconductor project [here](https://bioconductor.org/packages/release/bioc/html/sva.html). We include here a reimplementation of ComBat in R, Matlab and Python (neuroCombat) for the harmonization of imaging data. Our R implementation extends the original code for more flexibility and additional visualization of the internal components of the algorithm. We are also currently working on several extensions of the original method that will be included here as well. We use the MIT license for the Python and Matlab code, and an Artistic License 2.0 for the R code to be compatible with the `sva` package. 
 
 - [R implementation webpage](https://github.com/Jfortin1/ComBatHarmonization/tree/master/R)
 - [Python implementation webpage](https://github.com/Jfortin1/ComBatHarmonization/tree/master/Python) (neuroCombat)
