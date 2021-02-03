@@ -1,21 +1,21 @@
 Package: neuroCombat
 Title: Harmonization of multi-site imaging data with ComBat
-Version: 1.0.5
-Author: Jean-Philippe Fortin
-Maintainer: Jean-Philippe Fortin <fortin946@gmail.com>
+Version: 1.0.6
+Authors@R: 
+    person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre"))
 Depends: R (>= 3.6.0), 
-	utils, 
-	stats,
-	graphics,
-	matrixStats
+    graphics,
+    matrixStats,
+    stats,
+    utils 
 Suggests:
-	testthat,
-	knitr,
-	rmarkdown,
-	BiocStyle
-Description: Title: Harmonization of multi-site imaging data with ComBat.
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat
+Description: Harmonization of multi-site imaging data with ComBat.
 LazyData: TRUE
-License: MIT + file LICENSE
+License: Artistic-2.0
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr

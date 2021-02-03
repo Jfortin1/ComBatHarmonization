@@ -1,5 +1,3 @@
-
-
 #' @title Draw prior distributions of location parameters (gamma estimates)
 #' @description Draw prior distributions of location parameters (gamma estimates).
 #' @param combat.estimates estimates list from neuroCombat output
@@ -34,7 +32,7 @@ drawPriorGamma <- function(combat.estimates, col=NULL, xlim=c(-3,1.5), ylim=c(0,
 #' @param ylim y-axis limits#' 
 #' @return Nothing. A plot will be produced as side effect.
 #' @export
-drawPriorDelta <- function(estimates, col=NULL, xlim=c(-0.3,2), ylim=c(0,3)){
+drawPriorDelta <- function(combat.estimates, col=NULL, xlim=c(-0.3,2), ylim=c(0,3)){
   nn <- length(combat.estimates$gamma.bar)
   if (is.null(col)){
     col <- 1:nn
