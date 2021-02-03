@@ -15,7 +15,7 @@ Suggests:
 	BiocStyle
 Description: Title: Harmonization of multi-site imaging data with ComBat.
 LazyData: TRUE
-License: MIT + file LICENSE
+License: Artistic 2.0 + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr
