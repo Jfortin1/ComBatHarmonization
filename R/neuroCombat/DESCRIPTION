@@ -5,9 +5,10 @@ Authors@R:
     person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre"))
 Depends: R (>= 3.6.0), 
     graphics,
-    matrixStats,
     stats,
     utils 
+Imports: 
+    matrixStats
 Suggests:
     BiocStyle,
     knitr,
