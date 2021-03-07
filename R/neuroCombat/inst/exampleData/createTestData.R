@@ -9,8 +9,8 @@ data[,6:10] <- (data[,6:10]+5)*1.5
 colnames(data) <- paste0("Scan_", 1:ncol(data))
 rownames(data) <- paste0("Feature_", 1:nrow(data))
 combatExampleData <- data
-combatExampleBatch <- c(rep("Scanner1", 5), rep("Scanner2", 5))
-combatExamplePheno <- rep(c("Normal", "Disease"),5)
+combatExampleScanner <- c(rep("Scanner1", 5), rep("Scanner2", 5))
+combatExamplePheno <- rep(c("Control", "Disease"),5)
 save(combatExampleData, file="../../data/combatExampleData.rda")
-save(combatExampleBatch, file="../../data/combatExampleBatch.rda")
+save(combatExampleScanner, file="../../data/combatExampleScanner.rda")
 save(combatExamplePheno, file="../../data/combatExamplePheno.rda")

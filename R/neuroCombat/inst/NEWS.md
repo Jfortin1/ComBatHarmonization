@@ -1,3 +1,7 @@
+Changes in Version 1.0.7
+	- Package now depends on BiocParallel. Parellel options available for non-parametric adjustments to speed up computations.
+	- Fixed a bug related to imaging features for which values are constant within a scanner/batch. 
+	
 Changes in Version 1.0.6
 	- Changing MIT license to Artistic-2.0 license
 

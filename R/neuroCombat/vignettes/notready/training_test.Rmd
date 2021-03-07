@@ -28,10 +28,10 @@ We use the example dataset stored in the ```neuroCombat``` package: 10 scans fro
 ```{r, warning=FALSE, message=FALSE}
 library(neuroCombat)
 data  <- combatExampleData
-batch <- combatExampleBatch
+scanner <- combatExampleScanner
 pheno <- combatExamplePheno
 mod   <- model.matrix(~pheno)
-batch
+scanner
 pheno
 head(data)
 ```
@@ -46,8 +46,8 @@ indices.training <- c(1:10)
 indices.test     <- c(1,2,6,7)
 data.training    <- data[, indices.training]
 data.test        <- data[, indices.test]
-batch.training   <- batch[indices.training]
-batch.test       <- batch[indices.test]
+scanner.training   <- scanner[indices.training]
+scanner.test       <- scanner[indices.test]
 ```
 
 ## Scenario 1: no covariates adjustment in training dataset and no covariates adjustment in test dataset
@@ -55,8 +55,8 @@ batch.test       <- batch[indices.test]
 We estimate scanner effects using the full dataset as training dataset, and apply the scanner correction on the test dataset. We don't apply any covariates adjustment. Since the test dataset is part of the training dataset, we should obtain identical harmonized data. 
 
 ```{r, warning=FALSE, message=FALSE}
-data.training.harmonized <- neuroCombat(data.training, batch=batch.training)
-data.test.harmonized <- neuroCombatFromTraining(data.test, batch=batch.test, estimates=data.training.harmonized$estimates)
+data.training.harmonized <- neuroCombat(data.training, batch=scanner.training)
+data.test.harmonized <- neuroCombatFromTraining(data.test, batch=scanner.test, estimates=data.training.harmonized$estimates)
 ```
 
 ```{r, echo=FALSE}
@@ -91,8 +91,8 @@ To standardize the test dataset, we use an average of the standardization factor
 
 
 ```{r, warning=FALSE, message=FALSE}
-data.training.harmonized <- neuroCombat(data.training, batch=batch.training, mod=mod)
-data.test.harmonized <- neuroCombatFromTraining(data.test, batch=batch.test, estimates=data.training.harmonized$estimates)
+data.training.harmonized <- neuroCombat(data.training, batch=scanner.training, mod=mod)
+data.test.harmonized <- neuroCombatFromTraining(data.test, batch=scanner.test, estimates=data.training.harmonized$estimates)
 ```
 
 ```{r, echo=FALSE}

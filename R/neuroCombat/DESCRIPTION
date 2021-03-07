@@ -1,6 +1,6 @@
 Package: neuroCombat
 Title: Harmonization of multi-site imaging data with ComBat
-Version: 1.0.6
+Version: 1.0.7
 Authors@R: 
     person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre"))
 Depends: R (>= 3.6.0), 
@@ -8,6 +8,7 @@ Depends: R (>= 3.6.0),
     stats,
     utils 
 Imports: 
+    BiocParallel,
     matrixStats
 Suggests:
     BiocStyle,
