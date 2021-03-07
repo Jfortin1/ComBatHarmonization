@@ -20,7 +20,7 @@ To use ComBat, the following scripts will need to be available in the Matlab pat
 
 The directory containing those scripts can be added to the Matlab path as follows:
 ```matlab
-addPath('path/to/the/scripts/folder');
+addpath('path/to/the/scripts/folder');
 ```
 
 <div id='id-section2'/>
