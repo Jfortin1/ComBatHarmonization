@@ -57,6 +57,11 @@ function bayesdata = combat(dat, batch, mod, parametric)
 	grand_mean = (n_batches/n_array)*B_hat(1:n_batch,:);
 	var_pooled = ((dat-(design*B_hat)').^2)*repmat(1/n_array,n_array,1);
 	stand_mean = grand_mean'*repmat(1,1,n_array);
+	% Making sure pooled variances are not zero:
+	wh = find(var_pooled==0);
+	var_pooled_notzero = var_pooled;
+	var_pooled_notzero(wh) = [];
+	var_pooled(wh) = median(var_pooled_notzero);
 
 	if not(isempty(design))
 		tmp = design;
