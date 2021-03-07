@@ -199,7 +199,7 @@ getStandardizedData <- function(dat, dataDict, design, hasNAs){
           var.pooled <- rowVars(dat-t(design %*% B.hat), na.rm=TRUE)/factors
       }
     }
-    var.pooled[var.pooled==0] <- median(var.pooled, na.mr=TRUE)
+    var.pooled[var.pooled==0] <- median(var.pooled[var.pooled!=0], na.rm=TRUE)
 
     if(!is.null(design)){
         tmp <- design
