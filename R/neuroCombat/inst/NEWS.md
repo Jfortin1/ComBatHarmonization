@@ -1,3 +1,6 @@
+Changes in Version 1.0.8
+	- Fixed a bug related to imaging features for which values are constant within a scanner/batch for EB=FALSE option. 
+
 Changes in Version 1.0.7
 	- Package now depends on BiocParallel. Parellel options available for non-parametric adjustments to speed up computations.
 	- Fixed a bug related to imaging features for which values are constant within a scanner/batch. 

@@ -331,6 +331,7 @@ getNaiveEstimators <- function(s.data,
     }
     colnames(gamma.hat)  <- colnames(delta.hat) <- rownames(s.data)
     rownames(gamma.hat)  <- rownames(delta.hat) <- names(batches)
+    delta.hat[delta.hat==0] <- 1
     out <- list(gamma.hat=gamma.hat, delta.hat=delta.hat)
     return(out)
 }
