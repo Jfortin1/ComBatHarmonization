@@ -177,6 +177,7 @@ neuroCombat <- function(dat,
 #' @return A named \code{list} of length 2. The first element (\code{dat.combat})
 #'     contains the harmonized data. The second element (\code{estimates}) contains
 #'     estimates and other parameters used during harmonization.
+#' @export
 neuroCombatFromTraining <- function(dat,
                                     batch,
                                     estimates,
