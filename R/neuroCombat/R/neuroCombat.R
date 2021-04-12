@@ -53,6 +53,13 @@ neuroCombat <- function(dat,
     .checkConstantRows(dat)
     .checkNARows(dat)
 
+    if (length(batch) !=ncol(dat)){
+        stop("Length of 'batch' must be equal to the number of columns in 'dat'.")
+    }
+    if (any(is.na(batch))){
+        stop("Missing values are not allowed in 'batch'. ")
+    }
+
      ## Check for missing values
     hasNAs <- any(is.na(dat))
     if (hasNAs & verbose){
