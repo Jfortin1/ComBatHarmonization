@@ -3,6 +3,7 @@
 export(drawPriorDelta)
 export(drawPriorGamma)
 export(neuroCombat)
+export(neuroCombatFromTraining)
 importFrom(BiocParallel,bplapply)
 importFrom(BiocParallel,bpparam)
 importFrom(graphics,lines)

@@ -1,3 +1,6 @@
+Changes in Version 1.0.11
+	- Added neuroCombatFromTraining (development version)
+
 Changes in Version 1.0.8
 	- Fixed a bug related to imaging features for which values are constant within a scanner/batch for EB=FALSE option. 
 
