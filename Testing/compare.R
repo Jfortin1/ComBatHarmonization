@@ -28,7 +28,7 @@ avail <- 1:4
 for (i in avail){
 	data_r <- read.csv(file.path("outputData", files.r[i])) %>% as.matrix
 	data_matlab <- read.csv(file.path("outputData", files.matlab[i]), head=FALSE) %>% as.matrix
-	similarity <- sum((data_r-data_matlab)<tol)/ncol(data_r)/nrow(data_r)*100
+	similarity <- sum(abs(data_r-data_matlab)<tol)/ncol(data_r)/nrow(data_r)*100
 	print(similarity)
 }
 
@@ -37,8 +37,9 @@ avail <- c(1:32)
 for (i in avail){
 	data_r <- read.csv(file.path("outputData", files.r[i])) %>% as.matrix
 	data_python <- read.csv(file.path("outputData", files.python[i]), head=FALSE) %>% as.matrix
-	similarity <- sum((data_r-data_python)<tol)/ncol(data_r)/nrow(data_r)*100
+	similarity <- sum(abs(data_r-data_python)<tol)/ncol(data_r)/nrow(data_r)*100
 	print(similarity)
 }
+
 
 
