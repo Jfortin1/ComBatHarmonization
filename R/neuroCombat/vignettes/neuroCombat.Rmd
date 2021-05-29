@@ -1,0 +1,79 @@
+---
+title: "Harmonization of a multi-site imaging dataset using neuroCombat"
+author: 
+- name: Jean-Philippe Fortin
+  email: fortin946@gmail.com
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+#    theme: paper
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Harmonization of a multi-site imaging dataset using neuroCombat}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+bibliography: references.bib
+---
+
+
+# Intro
+
+Vignette describing a function in development, ```neuroCombatFromTraining```.  The function applies ComBat scanner correction factors estimated from a training dataset to a test dataset. Scanners/sites of the test dataset must be included in the training dataset. 
+
+# Example dataset
+
+
+```{r}
+library(neuroCombat)
+library(neuroCombatData)
+se <- seCorticalThickness
+se
+```
+
+We use the example dataset stored in the ```neuroCombatData``` package: 10 scans from 2 scanners, with 200 imaging features. Scans come from either a normal or disease brain.  
+
+
+# Harmonization
+
+```{r}
+data <- assays(se)[["freesurfer"]]
+mod <- model.matrix(~colData(se)$gender+colData(se)$age)
+results <- neuroCombat(dat=data,
+                       batch=colData(se)$site,
+                       mod=mod)
+```
+
+```{r}
+names(results)
+```
+
+```{r}
+neuroCombat::drawPriorDelta(results$estimates, xlim=c(0,2.5))
+neuroCombat::drawPriorGamma(results$estimates, xlim=c(-1.5,1.5))
+```
+
+
+
+  
+
+```{r}
+data_standardized <- results[["dat.standardized"]]
+col <- as.numeric(as.factor(colData(se)$site))
+boxplot(data_standardized, ylim=c(-2,2),col=col)
+```
+
+
+```{r}
+data_norm <- results[["dat.combat"]]
+data_norm <- standardizeData(data_norm,
+                             batch=colData(se)$site,
+                             mod=mod)
+boxplot(data_norm, ylim=c(-2,2),col=col)
+```
+
+
+
+
+# References
+

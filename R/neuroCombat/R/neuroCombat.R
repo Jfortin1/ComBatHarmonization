@@ -31,9 +31,16 @@
 #'     This is mostly useful when \code{parametric=FALSE}.
 #' @param verbose Should progress messages be printed? TRUE by default.
 #' 
-#' @return A named \code{list} of length 2. The first element (\code{dat.combat})
-#'     contains the harmonized data. The second element (\code{estimates}) contains
-#'     estimates and other parameters used during harmonization.
+#' @return A named \code{list} of length 5. The 1st element (\code{dat.combat})
+#'     contains the harmonized data. The 2nd element (\code{estimates}) contains
+#'     estimates and other parameters used during harmonization. The 3rd element
+#'     (\code{dataDict}) contains information about the dataset and the batch 
+#'     covariate information that were provided to the neuroCombat function.
+#'     The 4th element (\code{data.original}) contains the raw data that were
+#'     provided to neuroCombat. The 5th element (\code{data.standardized})
+#'     contains the standardized original data: each feature is scaled and
+#'     centered after adjusting for biological covariates).
+#' 
 #' 
 #' @importFrom BiocParallel bpparam
 #' @export
@@ -159,7 +166,9 @@ neuroCombat <- function(dat,
 
     out <- list(dat.combat=as.matrix(bayesdata),
                 estimates=estimates,
-                info=dataDict)
+                info=dataDict,
+                dat.original=dat.original,
+                dat.standardized=s.data)
     return(out)
 }
 

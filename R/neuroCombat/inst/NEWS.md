@@ -1,3 +1,7 @@
+Changes in Version 1.0.12
+    - Suggested dependency of newly-created package neuroCombatData
+	- Added vignette using neuroCombatData data
+
 Changes in Version 1.0.11
 	- Added neuroCombatFromTraining (development version)
 

@@ -84,3 +84,38 @@ drawPriorDelta <- function(combat.estimates, col=NULL, xlim=c(-0.3,2), ylim=c(0,
         )
     }
 }
+
+
+#' @title Standardize data (feature standardization)
+#' @description Standardize data (feature standardization). Optional
+#'     covariates adjustment is provided. 
+#' @param dat Numeric matrix with imaging features as rows,
+#'                and scans/images as columns.
+#' @param batch Numeric or character vector specifying the batch/scanner 
+#'     variable needed for harmonization. Length must be equal to the 
+#'     number of columns in \code{dat}. 
+#' @param mod Optional model matrix for outcome of interest and 
+#'     other covariates besides batch/scanner.
+#' @param mean.only Should only correction factors be calculated for location?
+#'     FALSE by default.
+#' @return Standardized data.
+#' @export
+standardizeData <- function(dat,
+                            batch,
+                            mod,
+                            mean.only=FALSE
+){
+    hasNAs   <- any(is.na(dat))
+    dataDict <- getDataDict(batch,
+                            mod=mod,
+                            mean.only=mean.only)
+    design   <- dataDict[["design"]]
+    s.data   <- getStandardizedData(dat=dat,
+                                    dataDict=dataDict,
+                                    design=design,
+                                    hasNAs=hasNAs)[["s.data"]]
+    return(s.data)
+}
+
+
+
