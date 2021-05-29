@@ -1,0 +1,2 @@
+#' @import SummarizedExperiment
+NULL

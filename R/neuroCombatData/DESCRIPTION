@@ -1,0 +1,30 @@
+Package: neuroCombatData
+Title: Example dataset for neuroCombat
+Version: 0.99.0
+Authors@R: 
+    person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre"))
+Depends: R (>= 3.6.0), 
+    graphics,
+    stats,
+    utils,
+    SummarizedExperiment
+Suggests:
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat
+Description: Provides a multi-site cortical thickness measurements
+    (263 subjects across 9 sites). Data were simulated based on a 
+    subset of the UCSF FreeSurfer cross-sectional cortical thickness
+    processed data.The goal of the simulation was to create a dataset
+    that mimics both the technical variability and biological
+    variability observed in a in real-world study. multi-site ADNI
+    cortical thickness measurements dataset. Data were obtained from
+    the UCSF cross-sectional FreeSurfer (6.0) analysis. Imaging features
+    (ROIs) correspond to the featured measured in the FreeSurfer
+    software (v6.0).
+LazyData: TRUE
+License: Artistic-2.0
+Encoding: UTF-8
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
