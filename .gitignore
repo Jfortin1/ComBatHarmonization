@@ -6,3 +6,9 @@ Python/neuroCombat/__pycache__
 R/neuroCombatData/inst/scripts/adni/
 R/neuroCombatData/inst/scripts/temp/
 R/neuroCombat/vignettes/neuroCombat.html
+papers/
+todo.txt
+plan.R
+dev/
+questions.txt
+simulations/
