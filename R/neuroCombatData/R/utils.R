@@ -1,2 +1,0 @@
-#' @import SummarizedExperiment
-NULL

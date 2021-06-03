@@ -1,3 +1,6 @@
 [submodule "Python/neuroCombat"]
 	path = Python/neuroCombat
 	url = https://github.com/Jfortin1/neuroCombat
+[submodule "R/neuroCombatData"]
+	path = R/neuroCombatData
+	url = https://github.com/Jfortin1/neuroCombatData
