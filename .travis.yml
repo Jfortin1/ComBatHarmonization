@@ -1,7 +1,0 @@
-sudo: required
-language: r
-bioc_required: true
-warnings_are_errors: false
-before_install:
-  - cd R/neuroCombat
-  
