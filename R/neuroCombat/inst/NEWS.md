@@ -1,3 +1,6 @@
+Changes in Version 1.0.13
+	- Added neuroCombatData package in Remotes
+
 Changes in Version 1.0.12
     - Suggested dependency of newly-created package neuroCombatData
 	- Added vignette using neuroCombatData data
