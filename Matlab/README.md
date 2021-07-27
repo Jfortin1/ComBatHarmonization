@@ -3,7 +3,6 @@
 ## Table of content
 - [1. Installation](#id-section1)
 - [2. Harmonization](#id-section2)
-- [3. Visualization](#id-section3)
 
 <div id='id-section1'/>
 
@@ -45,16 +44,22 @@ n=10;
 batch = [1 1 1 1 1 2 2 2 2 2]; %Batch variable for the scanner id
 dat = randn(p,n); %Random data matrix
 ```
-and let simulate an age and disease variable: 
+and let simulate two biological covariates, age and sex:
 ```matlab
 age = [82 70 68 66 80 69 72 76 74 80]'; % Continuous variable
-disease = [1 2 1 2 1 2 1 2 1 2]'; % Categorical variable
+sex = [1 2 1 2 1 2 1 2 1 2]'; % Categorical variable (1 for females, 2 for males)
 ```
-We create a n x 2 model matrix with age as the first column, and the second disease group as a dummy variable for the second column (disease=1 being the baseline category):
+
+To model biological covariates, a model matrix that will be used to fit coefficients in the linear regression framework has to be provided. To build such a model matrix, continuous variables can be used as they are as columns in the model matrix. For categorical variables, a chosen reference group has to be omitted in the model matrix for identifiability as the intercept will be already included in the ComBat model. 
+
+The following code will create a model matrix with age as the first column, and a dummy variable for males as a second column:
+
 ```matlab
-disease = dummyvar(disease);
-mod = [age disease(:,2)];
+sex = dummyvar(sex);
+mod = [age sex(:,2)];
 ```
+
+
 We use the function `combat` to harmonize the data across the 2 scanners using parametric adjustements:
 ```matlab
 data_harmonized = combat(dat, batch, mod, 1);
@@ -70,10 +75,27 @@ To use ComBat without adjusting for biological variables, simply set
 mod=[];
 ```
 
-<div id='id-section3'/>
+### 2.2 Examples for specifying biological covariates using `mod`
 
 
+Supposed we have 3 biological covariates: age, sex (males of females) and disease (healthy, mci, or AD).
 
+```matlab
+age = [82 70 68 66 80 69 72 76 74 80]'; % Continuous variable
+sex = [1 2 1 2 1 2 1 2 1 2]'; % Categorical variable (1 for females, 2 for males)
+sex = dummyvar(sex)
+disease = {'ad'; 'healthy';'healthy';'healthy';'mci';'mci';'healthy'; 'ad'; 'ad';'mci'};
+disease = categorical(disease)
+disease = dummyvar(disease)
+```
+
+To build the model matrix, we need to omit one category (reference group) for each of the categorical variables (sex and disease):
+
+```matlab
+mod = [age sex(:,2) disease(:,2:3)]
+```
+
+Here, we only omitted the first catergoy for sex and disease. Note that the choice of the reference groups will not impact the harmonization results. 
 
 
 
