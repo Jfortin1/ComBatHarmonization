@@ -4,24 +4,25 @@
 %dhat = delta_hat(j,:);
 % g.star is first row
 % d.star is second row
+% Optimized and parallelized by John C. Williams JCW 06/30/2023
 function adjust = inteprior(sdat, ghat, dhat)
-    gstar = [];
-    dstar = [];
     r = size(sdat,1);
-    for i = 1:r
-        g = ghat;
-        d = dhat;
-        g(i)=[];
-        d(i)=[];
+    n = size(sdat,2);
+    [gstar,dstar] = deal(nan(1,r));
+    prcalc_for_LH = 1./(2*pi*dhat).^(n/2);
+    parfor i = 1:r
+        chooseVec = true(r,1);
+        chooseVec(i) = false;
+        g = ghat(chooseVec);
+        d = dhat(chooseVec);
         x = sdat(i,:);
-        n = size(x,2);
-        j = repmat(1,1,size(x,2));
-        dat = repmat(x,size(g,2),1);
-        resid2 = (dat-repmat(g',1,size(dat,2))).^2;
-        sum2 = resid2 * j';
-        LH = 1./(2*pi*d).^(n/2).*exp(-sum2'./(2.*d));
-        gstar = [gstar sum(g.*LH)./sum(LH)];
-        dstar = [dstar sum(d.*LH)./sum(LH)];
+        resid2 = (x - g.').^2;
+        sum2 = sum(resid2,2);
+        this_prcalc_for_LH = prcalc_for_LH(chooseVec);
+        thisExpTerm = exp(-sum2'./(2.*d));
+        LH = this_prcalc_for_LH .* thisExpTerm;
+        gstar(i) = sum(g.*LH)./sum(LH);
+        dstar(i) = sum(d.*LH)./sum(LH);
     end
     adjust = [gstar; dstar];
 end
