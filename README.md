@@ -70,7 +70,7 @@ The reference implementation (Standard Version) of ComBat, developed for gene ex
 | No empirical Bayes   | x |    x    |       |
 | Mean adjustment only | x |    x    |        |
 | Reference batch | x |    x    |        |
-| Can handle missing values | x |        |        |
+| Can handle missing values | x |        |    x   |
 
 
 ### Testing and comparing the different implementations
@@ -92,6 +92,8 @@ The `Testing` directory contains code for testing and comparing the outputs from
 <div id='id-section5'/>
 
 ## 5. News
+
+07-02-2023: Handling of missing values now implemented in MATLAB. Additionally added optimizations and parallelization in order to substantially speed up the non-parametric adjustments procedure.
 
 05-23-2020: Reference batch option (```ref.batch```) now implemented in Python.
 
